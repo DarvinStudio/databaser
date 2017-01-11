@@ -10,7 +10,6 @@
 
 namespace Darvin\Databaser\Command;
 
-use Darvin\Databaser\Archiver\GzipArchiver;
 use Darvin\Databaser\Manager\RemoteManager;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
@@ -20,9 +19,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Download command
+ * Pull command
  */
-class DownloadCommand extends Command
+class PullCommand extends Command
 {
     /**
      * {@inheritdoc}
@@ -30,12 +29,13 @@ class DownloadCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('download')
+            ->setName('pull')
             ->setDefinition([
                 new InputArgument('user@host', InputArgument::REQUIRED),
-                new InputArgument('remote_project_path', InputArgument::REQUIRED),
-                new InputArgument('port', InputArgument::OPTIONAL, '', 22),
-                new InputOption('key_path', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
+                new InputArgument('project_path_remote', InputArgument::REQUIRED),
+                new InputArgument('project_path_local', InputArgument::REQUIRED),
+                new InputArgument('ssh_port', InputArgument::OPTIONAL, '', 22),
+                new InputOption('ssh_key', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
             ]);
     }
 
@@ -46,20 +46,19 @@ class DownloadCommand extends Command
     {
         list($user, $host) = $this->getUserAndHost($input);
 
-        $remoteProjectPath = $input->getArgument('remote_project_path');
+        $projectPathRemote = $input->getArgument('project_path_remote');
 
         $remoteManager = new RemoteManager(
-            new SSHClient($user, $host, $input->getOption('key_path'), $input->getArgument('port')),
-            $remoteProjectPath
+            new SSHClient($user, $host, $input->getOption('ssh_key'), $input->getArgument('ssh_port')),
+            $projectPathRemote
         );
 
-        $filename = sprintf('%s_%s.sql', $remoteManager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
-        $archiveFilename = $filename.'.gz';
-        $archivePathname = implode(DIRECTORY_SEPARATOR, [$remoteProjectPath, $archiveFilename]);
+        $filename = sprintf('%s_%s.sql.gz', $remoteManager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
+        $pathname = implode(DIRECTORY_SEPARATOR, [$projectPathRemote, $filename]);
 
-        $remoteManager->dumpDatabase($archivePathname)->getFile($archivePathname, $archiveFilename);
-
-        (new GzipArchiver())->extract($archiveFilename, $filename);
+        $remoteManager
+            ->dumpDatabase($pathname)
+            ->getFile($pathname, $filename);
     }
 
     /**
