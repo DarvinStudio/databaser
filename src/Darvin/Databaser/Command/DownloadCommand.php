@@ -69,15 +69,11 @@ class DownloadCommand extends Command
             }
         }
 
-        $command = sprintf(
-            'mysqldump %s %s | bzip2 -c > %s/%s_%s.sql.bz2',
-            implode(' ', $args),
-            $dbName,
-            $projectPath,
-            $dbName,
-            (new \DateTime())->format('d-m-Y_H-i-s')
-        );
+        $dumpFilename = sprintf('%s_%s.sql.bz2', $dbName, (new \DateTime())->format('d-m-Y_H-i-s'));
+        $dumpPathname = implode(DIRECTORY_SEPARATOR, [$projectPath, $dumpFilename]);
+        $command = sprintf('mysqldump %s %s | bzip2 -c > %s', implode(' ', $args), $dbName, $dumpPathname);
         $ssh->exec($command);
+        $ssh->download($dumpPathname, $dumpFilename);
     }
 
     /**

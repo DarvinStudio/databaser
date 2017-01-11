@@ -11,6 +11,7 @@
 namespace Darvin\Databaser\SSH;
 
 use phpseclib\Crypt\RSA;
+use phpseclib\Net\SCP;
 use phpseclib\Net\SSH2;
 
 /**
@@ -22,6 +23,11 @@ class SSHClient
      * @var \phpseclib\Net\SSH2
      */
     private $session;
+
+    /**
+     * @var \phpseclib\Net\SCP
+     */
+    private $scp;
 
     /**
      * @param string $user        Username
@@ -38,6 +44,21 @@ class SSHClient
 
         if (!$this->session->login($user, $this->getKey($keyPathname))) {
             throw new \RuntimeException(sprintf('Unable to login at host "%s" as user "%s".', $host, $user));
+        }
+
+        $this->scp = null;
+    }
+
+    /**
+     * @param string $remotePathname Remote file pathname
+     * @param string $localPathname  Local file pathname
+     *
+     * @throws \RuntimeException
+     */
+    public function download($remotePathname, $localPathname)
+    {
+        if (!$this->getScp()->get($remotePathname, $localPathname)) {
+            throw new \RuntimeException(sprintf('Unable to download file "%s".', $remotePathname));
         }
     }
 
@@ -96,5 +117,17 @@ class SSHClient
         }
 
         throw new \RuntimeException('Unable to detect home directory.');
+    }
+
+    /**
+     * @return \phpseclib\Net\SCP
+     */
+    private function getScp()
+    {
+        if (null === $this->scp) {
+            $this->scp = new SCP($this->session);
+        }
+
+        return $this->scp;
     }
 }
