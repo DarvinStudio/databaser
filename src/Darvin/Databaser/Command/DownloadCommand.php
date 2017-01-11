@@ -10,6 +10,7 @@
 
 namespace Darvin\Databaser\Command;
 
+use Darvin\Databaser\Archiver\GzipArchiver;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -69,11 +70,13 @@ class DownloadCommand extends Command
             }
         }
 
-        $dumpFilename = sprintf('%s_%s.sql.bz2', $dbName, (new \DateTime())->format('d-m-Y_H-i-s'));
-        $dumpPathname = implode(DIRECTORY_SEPARATOR, [$projectPath, $dumpFilename]);
-        $command = sprintf('mysqldump %s %s | bzip2 -c > %s', implode(' ', $args), $dbName, $dumpPathname);
+        $filename = sprintf('%s_%s.sql', $dbName, (new \DateTime())->format('d-m-Y_H-i-s'));
+        $compressedFilename = $filename.'.gz';
+        $compressedPathname = implode(DIRECTORY_SEPARATOR, [$projectPath, $compressedFilename]);
+        $command = sprintf('mysqldump %s %s | gzip -c > %s', implode(' ', $args), $dbName, $compressedPathname);
         $ssh->exec($command);
-        $ssh->download($dumpPathname, $dumpFilename);
+        $ssh->download($compressedPathname, $compressedFilename);
+        (new GzipArchiver())->extract($compressedFilename, $filename);
     }
 
     /**
