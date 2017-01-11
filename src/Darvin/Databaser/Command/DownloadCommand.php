@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Download command
@@ -31,6 +32,7 @@ class DownloadCommand extends Command
             ->setName('download')
             ->setDefinition([
                 new InputArgument('user@host', InputArgument::REQUIRED),
+                new InputArgument('project_path', InputArgument::REQUIRED),
                 new InputArgument('port', InputArgument::OPTIONAL, '', 22),
                 new InputOption('key_path', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
             ]);
@@ -44,7 +46,58 @@ class DownloadCommand extends Command
         list($user, $host) = $this->getUserAndHost($input);
 
         $ssh = new SSHClient($user, $host, $input->getOption('key_path'), $input->getArgument('port'));
-        $output->writeln($ssh->exec('cat www/thephmhotels.dev.darvins.ru/app/config/parameters.yml'));
+
+        $projectPath = $input->getArgument('project_path');
+
+        $params = Yaml::parse($ssh->exec(sprintf('cat %s/app/config/parameters.yml', $projectPath)));
+        $params = $this->getParameter($params, 'parameters');
+
+        $dbName = $this->getParameter($params, 'database_name');
+
+        $args = [];
+
+        foreach ([
+            'h' => 'database_host',
+            'P' => 'database_port',
+            'u' => 'database_user',
+            'p' => 'database_password',
+        ] as $arg => $param) {
+            $value = $this->getParameter($params, $param, false);
+
+            if (null !== $value) {
+                $args[] = '-'.$arg.$value;
+            }
+        }
+
+        $command = sprintf(
+            'mysqldump %s %s | bzip2 -c > %s/%s_%s.sql.bz2',
+            implode(' ', $args),
+            $dbName,
+            $projectPath,
+            $dbName,
+            (new \DateTime())->format('d-m-Y_H-i-s')
+        );
+        $ssh->exec($command);
+    }
+
+    /**
+     * @param array  $params            Parameters
+     * @param string $name              Element name
+     * @param bool   $notFoundException Whether to throw not found exception
+     *
+     * @return string
+     * @throws \RuntimeException
+     */
+    private function getParameter(array $params, $name, $notFoundException = true)
+    {
+        if (isset($params[$name])) {
+            return $params[$name];
+        }
+        if ($notFoundException) {
+            throw new \RuntimeException(sprintf('Parameters file is invalid: unable to find "%s" element.', $name));
+        }
+
+        return null;
     }
 
     /**

@@ -56,7 +56,7 @@ class SSHClient
             throw new \RuntimeException($this->session->getStdError());
         }
 
-        return $output;
+        return trim($output);
     }
 
     /**
