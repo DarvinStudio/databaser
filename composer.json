@@ -5,8 +5,8 @@
     "license": "proprietary",
     "authors": [
         {
-            "name":     "Darvin Studio",
-            "email":    "info@darvin-studio.ru",
+            "name": "Darvin Studio",
+            "email": "info@darvin-studio.ru",
             "homepage": "https://www.darvin-studio.ru"
         }
     ],
@@ -16,6 +16,7 @@
         }
     },
     "require": {
+        "phpseclib/phpseclib": "^2.0",
         "symfony/console": "^3.2"
     }
 }
