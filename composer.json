@@ -1,0 +1,16 @@
+{
+    "name": "darvinstudio/databaser",
+    "description": "Database management utility",
+    "type": "project",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name":     "Darvin Studio",
+            "email":    "info@darvin-studio.ru",
+            "homepage": "https://www.darvin-studio.ru"
+        }
+    ],
+    "require": {
+        "symfony/console": "^3.2"
+    }
+}
