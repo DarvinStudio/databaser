@@ -80,7 +80,7 @@ class DownloadCommand extends Command
         $filename = sprintf('%s_%s.sql', $dbName, (new \DateTime())->format('d-m-Y_H-i-s'));
         $compressedFilename = $filename.'.gz';
         $compressedPathname = implode(DIRECTORY_SEPARATOR, [$projectPath, $compressedFilename]);
-        $command = sprintf('mysqldump %s %s | gzip -c > %s', implode(' ', $args), $dbName, $compressedPathname);
+        $command = sprintf('mysqldump --compact %s %s | gzip -c > %s', implode(' ', $args), $dbName, $compressedPathname);
 
         $io->comment('Dump database...');
 
