@@ -1,0 +1,10 @@
+{
+    "directories": [
+        "src",
+        "vendor"
+    ],
+    "main": "bin/databaser",
+    "output": "databaser.phar",
+    "stub": true,
+    "git-version": "package_version"
+}
