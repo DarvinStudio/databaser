@@ -53,6 +53,7 @@ class SSHClient
      * @param string $remotePathname Remote file pathname
      * @param string $localPathname  Local file pathname
      *
+     * @return SSHClient
      * @throws \RuntimeException
      */
     public function download($remotePathname, $localPathname)
@@ -60,6 +61,8 @@ class SSHClient
         if (!$this->getScp()->get($remotePathname, $localPathname)) {
             throw new \RuntimeException(sprintf('Unable to download file "%s".', $remotePathname));
         }
+
+        return $this;
     }
 
     /**
