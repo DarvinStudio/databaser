@@ -31,7 +31,8 @@ class PullCommand extends Command
         $this
             ->setName('pull')
             ->setDefinition([
-                new InputArgument('user@host', InputArgument::REQUIRED),
+                new InputArgument('ssh_user', InputArgument::REQUIRED),
+                new InputArgument('ssh_host', InputArgument::REQUIRED),
                 new InputArgument('project_path_remote', InputArgument::REQUIRED),
                 new InputArgument('project_path_local', InputArgument::REQUIRED),
                 new InputArgument('ssh_port', InputArgument::OPTIONAL, '', 22),
@@ -44,12 +45,15 @@ class PullCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        list($user, $host) = $this->getUserAndHost($input);
-
         $projectPathRemote = $input->getArgument('project_path_remote');
 
         $remoteManager = new RemoteManager(
-            new SSHClient($user, $host, $input->getOption('ssh_key'), $input->getArgument('ssh_port')),
+            new SSHClient(
+                $input->getArgument('ssh_user'),
+                $input->getArgument('ssh_host'),
+                $input->getOption('ssh_key'),
+                $input->getArgument('ssh_port')
+            ),
             $projectPathRemote
         );
 
@@ -59,22 +63,5 @@ class PullCommand extends Command
         $remoteManager
             ->dumpDatabase($pathname)
             ->getFile($pathname, $filename);
-    }
-
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input Input
-     *
-     * @return array
-     * @throws \InvalidArgumentException
-     */
-    private function getUserAndHost(InputInterface $input)
-    {
-        $text = $input->getArgument('user@host');
-
-        if (1 !== substr_count($text, '@')) {
-            throw new \InvalidArgumentException(sprintf('Argument "user@host" must contain single "@" symbol, got "%s".', $text));
-        }
-
-        return explode('@', $text);
     }
 }
