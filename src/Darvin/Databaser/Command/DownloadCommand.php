@@ -11,14 +11,13 @@
 namespace Darvin\Databaser\Command;
 
 use Darvin\Databaser\Archiver\GzipArchiver;
+use Darvin\Databaser\Manager\RemoteManager;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Download command
@@ -34,7 +33,7 @@ class DownloadCommand extends Command
             ->setName('download')
             ->setDefinition([
                 new InputArgument('user@host', InputArgument::REQUIRED),
-                new InputArgument('project_path', InputArgument::REQUIRED),
+                new InputArgument('remote_project_path', InputArgument::REQUIRED),
                 new InputArgument('port', InputArgument::OPTIONAL, '', 22),
                 new InputOption('key_path', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
             ]);
@@ -45,74 +44,22 @@ class DownloadCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         list($user, $host) = $this->getUserAndHost($input);
 
-        $io->comment('Connect...');
+        $remoteProjectPath = $input->getArgument('remote_project_path');
 
-        $ssh = new SSHClient($user, $host, $input->getOption('key_path'), $input->getArgument('port'));
+        $remoteManager = new RemoteManager(
+            new SSHClient($user, $host, $input->getOption('key_path'), $input->getArgument('port')),
+            $remoteProjectPath
+        );
 
-        $projectPath = $input->getArgument('project_path');
-
-        $io->comment('Fetch database parameters...');
-
-        $params = Yaml::parse($ssh->exec(sprintf('cat %s/app/config/parameters.yml', $projectPath)));
-        $params = $this->getParameter($params, 'parameters');
-
-        $dbName = $this->getParameter($params, 'database_name');
-
-        $args = [];
-
-        foreach ([
-            'h' => 'database_host',
-            'P' => 'database_port',
-            'u' => 'database_user',
-            'p' => 'database_password',
-        ] as $arg => $param) {
-            $value = $this->getParameter($params, $param, false);
-
-            if (null !== $value) {
-                $args[] = '-'.$arg.$value;
-            }
-        }
-
-        $filename = sprintf('%s_%s.sql', $dbName, (new \DateTime())->format('d-m-Y_H-i-s'));
+        $filename = sprintf('%s_%s.sql', $remoteManager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
         $compressedFilename = $filename.'.gz';
-        $compressedPathname = implode(DIRECTORY_SEPARATOR, [$projectPath, $compressedFilename]);
-        $command = sprintf('mysqldump --compact %s %s | gzip -c > %s', implode(' ', $args), $dbName, $compressedPathname);
+        $compressedPathname = implode(DIRECTORY_SEPARATOR, [$remoteProjectPath, $compressedFilename]);
 
-        $io->comment('Dump database...');
-
-        $ssh->exec($command);
-
-        $io->comment('Download compressed database dump...');
-
-        $ssh->download($compressedPathname, $compressedFilename);
-
-        $io->comment('Decompress database dump...');
+        $remoteManager->dumpDatabase($compressedPathname)->getFile($compressedPathname, $compressedFilename);
 
         (new GzipArchiver())->extract($compressedFilename, $filename);
-    }
-
-    /**
-     * @param array  $params            Parameters
-     * @param string $name              Element name
-     * @param bool   $notFoundException Whether to throw not found exception
-     *
-     * @return string
-     * @throws \RuntimeException
-     */
-    private function getParameter(array $params, $name, $notFoundException = true)
-    {
-        if (isset($params[$name])) {
-            return $params[$name];
-        }
-        if ($notFoundException) {
-            throw new \RuntimeException(sprintf('Parameters file is invalid: unable to find "%s" element.', $name));
-        }
-
-        return null;
     }
 
     /**

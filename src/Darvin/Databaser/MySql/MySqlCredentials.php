@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Darvin\Databaser\MySQL;
+namespace Darvin\Databaser\MySql;
 
 /**
  * MySQL credentials
  */
-class MySQLCredentials
+class MySqlCredentials
 {
     /**
      * @var array
@@ -72,7 +72,7 @@ class MySQLCredentials
     /**
      * @param array $params Symfony parameters
      *
-     * @return MySQLCredentials
+     * @return MySqlCredentials
      * @throws \InvalidArgumentException
      */
     public static function fromSymfonyParams(array $params)
@@ -97,14 +97,16 @@ class MySQLCredentials
     }
 
     /**
+     * @param bool $includeDbName Whether to include database name
+     *
      * @return string
      */
-    public function toClientArgString()
+    public function toClientArgString($includeDbName = true)
     {
         $args = [];
 
         foreach (self::$clientArgMap as $property => $arg) {
-            if (null !== $this->$property) {
+            if (null !== $this->$property && ($includeDbName || 'dbName' !== $property)) {
                 $args[] = '-'.$arg.$this->$property;
             }
         }

@@ -50,22 +50,6 @@ class SSHClient
     }
 
     /**
-     * @param string $remotePathname Remote file pathname
-     * @param string $localPathname  Local file pathname
-     *
-     * @return SSHClient
-     * @throws \RuntimeException
-     */
-    public function download($remotePathname, $localPathname)
-    {
-        if (!$this->getScp()->get($remotePathname, $localPathname)) {
-            throw new \RuntimeException(sprintf('Unable to download file "%s".', $remotePathname));
-        }
-
-        return $this;
-    }
-
-    /**
      * @param string   $command  Command
      * @param callable $callback Callback
      *
@@ -81,6 +65,22 @@ class SSHClient
         }
 
         return trim($output);
+    }
+
+    /**
+     * @param string $remotePathname Remote file pathname
+     * @param string $localPathname  Local file pathname
+     *
+     * @return SSHClient
+     * @throws \RuntimeException
+     */
+    public function get($remotePathname, $localPathname)
+    {
+        if (!$this->getScp()->get($remotePathname, $localPathname)) {
+            throw new \RuntimeException(sprintf('Unable to get file "%s".', $remotePathname));
+        }
+
+        return $this;
     }
 
     /**
