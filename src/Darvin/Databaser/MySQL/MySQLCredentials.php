@@ -29,19 +29,19 @@ class MySQLCredentials
     /**
      * @var array
      */
-    private static $requiredSymfonyParams = [
-        'database_name',
-    ];
-
-    /**
-     * @var array
-     */
     private static $symfonyParamMap = [
         'host'     => 'database_host',
         'port'     => 'database_port',
         'dbName'   => 'database_name',
         'user'     => 'database_user',
         'password' => 'database_password',
+    ];
+
+    /**
+     * @var array
+     */
+    private static $requiredSymfonyParams = [
+        'database_name',
     ];
 
     /**
