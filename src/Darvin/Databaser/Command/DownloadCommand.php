@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -44,11 +45,17 @@ class DownloadCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+
         list($user, $host) = $this->getUserAndHost($input);
+
+        $io->comment('Connect...');
 
         $ssh = new SSHClient($user, $host, $input->getOption('key_path'), $input->getArgument('port'));
 
         $projectPath = $input->getArgument('project_path');
+
+        $io->comment('Fetch database parameters...');
 
         $params = Yaml::parse($ssh->exec(sprintf('cat %s/app/config/parameters.yml', $projectPath)));
         $params = $this->getParameter($params, 'parameters');
@@ -74,8 +81,17 @@ class DownloadCommand extends Command
         $compressedFilename = $filename.'.gz';
         $compressedPathname = implode(DIRECTORY_SEPARATOR, [$projectPath, $compressedFilename]);
         $command = sprintf('mysqldump %s %s | gzip -c > %s', implode(' ', $args), $dbName, $compressedPathname);
+
+        $io->comment('Dump database...');
+
         $ssh->exec($command);
+
+        $io->comment('Download compressed database dump...');
+
         $ssh->download($compressedPathname, $compressedFilename);
+
+        $io->comment('Decompress database dump...');
+
         (new GzipArchiver())->extract($compressedFilename, $filename);
     }
 
