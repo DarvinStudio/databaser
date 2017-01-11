@@ -10,6 +10,11 @@
             "homepage": "https://www.darvin-studio.ru"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
     "require": {
         "symfony/console": "^3.2"
     }

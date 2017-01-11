@@ -11,6 +11,9 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+use Darvin\Databaser\Command\DownloadCommand;
 use Symfony\Component\Console\Application;
 
 $app = new Application();
+$app->add(new DownloadCommand());
+$app->run();

@@ -11,11 +11,27 @@
 namespace Darvin\Databaser\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Download command
  */
 class DownloadCommand extends Command
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure()
+    {
+        $this->setName('download');
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $output->writeln('Hello, world!');
+    }
 }
