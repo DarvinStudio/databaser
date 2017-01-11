@@ -55,12 +55,7 @@ class RemoteManager
     {
         $credentials = $this->getMySqlCredentials();
 
-        $command = sprintf(
-            'mysqldump --compact %s %s | gzip -c > %s',
-            $credentials->toClientArgString(false),
-            $credentials->getDbName(),
-            $pathname
-        );
+        $command = sprintf('mysqldump %s %s | gzip -c > %s', $credentials->toClientArgString(false), $credentials->getDbName(), $pathname);
 
         $this->sshClient->exec($command);
 
