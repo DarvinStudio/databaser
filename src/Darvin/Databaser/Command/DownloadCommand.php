@@ -54,12 +54,12 @@ class DownloadCommand extends Command
         );
 
         $filename = sprintf('%s_%s.sql', $remoteManager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
-        $compressedFilename = $filename.'.gz';
-        $compressedPathname = implode(DIRECTORY_SEPARATOR, [$remoteProjectPath, $compressedFilename]);
+        $archiveFilename = $filename.'.gz';
+        $archivePathname = implode(DIRECTORY_SEPARATOR, [$remoteProjectPath, $archiveFilename]);
 
-        $remoteManager->dumpDatabase($compressedPathname)->getFile($compressedPathname, $compressedFilename);
+        $remoteManager->dumpDatabase($archivePathname)->getFile($archivePathname, $archiveFilename);
 
-        (new GzipArchiver())->extract($compressedFilename, $filename);
+        (new GzipArchiver())->extract($archiveFilename, $filename);
     }
 
     /**
