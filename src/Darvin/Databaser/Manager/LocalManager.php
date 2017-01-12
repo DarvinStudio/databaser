@@ -20,11 +20,6 @@ use Ifsnop\Mysqldump\Mysqldump;
 class LocalManager extends AbstractManager
 {
     /**
-     * @var string
-     */
-    private $projectPath;
-
-    /**
      * @var \Darvin\Databaser\MySql\MySqlCredentials
      */
     private $mySqlCredentials;
@@ -40,11 +35,11 @@ class LocalManager extends AbstractManager
     private $filesToRemove;
 
     /**
-     * @param string $projectPath Project path
+     * {@inheritdoc}
      */
     public function __construct($projectPath)
     {
-        $this->projectPath = $projectPath;
+        parent::__construct($projectPath);
 
         $this->mySqlCredentials = $this->pdo = null;
         $this->filesToRemove = [];
@@ -58,14 +53,6 @@ class LocalManager extends AbstractManager
         foreach ($this->filesToRemove as $pathname) {
             @unlink($pathname);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProjectPath()
-    {
-        return $this->projectPath;
     }
 
     /**

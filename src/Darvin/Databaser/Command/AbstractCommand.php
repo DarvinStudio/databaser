@@ -56,13 +56,13 @@ abstract class AbstractCommand extends Command
     protected function createRemoteManager(InputInterface $input)
     {
         return new RemoteManager(
+            $input->getArgument('project_path_remote'),
             new SSHClient(
                 $input->getArgument('ssh_user'),
                 $input->getArgument('ssh_host'),
                 $input->getOption('ssh_key'),
                 $input->getArgument('ssh_port')
-            ),
-            $input->getArgument('project_path_remote')
+            )
         );
     }
 }

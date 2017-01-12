@@ -18,12 +18,27 @@ abstract class AbstractManager
     /**
      * @var string
      */
+    protected $projectPath;
+
+    /**
+     * @var string
+     */
     protected $dumpFilename;
 
     /**
      * @var string
      */
     protected $dumpPathname;
+
+    /**
+     * @param string $projectPath Project path
+     */
+    public function __construct($projectPath)
+    {
+        $this->projectPath = $projectPath;
+
+        $this->dumpFilename = $this->dumpPathname = null;
+    }
 
     /**
      * @return string
@@ -33,10 +48,8 @@ abstract class AbstractManager
         if (empty($this->dumpPathname)) {
             $pathname = $this->getDumpFilename();
 
-            $projectPath = $this->getProjectPath();
-
-            if (!empty($projectPath)) {
-                $pathname = preg_replace('/\/*$/', '/', $projectPath).$pathname;
+            if (!empty($this->projectPath)) {
+                $pathname = preg_replace('/\/*$/', '/', $this->projectPath).$pathname;
             }
 
             $this->dumpPathname = $pathname;
@@ -64,7 +77,10 @@ abstract class AbstractManager
     /**
      * @return string
      */
-    abstract public function getProjectPath();
+    public function getProjectPath()
+    {
+        return $this->projectPath;
+    }
 
     /**
      * @return \Darvin\Databaser\MySql\MySqlCredentials
