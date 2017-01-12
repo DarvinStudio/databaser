@@ -168,6 +168,7 @@ class LocalManager implements ManagerInterface
             $credentials = $this->getMySqlCredentials();
             $this->pdo = new \PDO($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword());
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo->query('SET NAMES UTF8');
         }
 
         return $this->pdo;
