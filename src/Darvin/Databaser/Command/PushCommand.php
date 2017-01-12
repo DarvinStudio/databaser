@@ -48,5 +48,9 @@ class PushCommand extends AbstractCommand
         $io->comment('Uploading local database dump...');
 
         $remoteManager->upload($localManager->getDumpPathname(), $uploadPathname);
+
+        $io->comment('Dumping remote database...');
+
+        $remoteManager->dumpDatabase();
     }
 }
