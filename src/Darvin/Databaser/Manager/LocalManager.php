@@ -166,7 +166,7 @@ class LocalManager extends AbstractManager
             $pathname = 'app/config/parameters.yml';
 
             if (!empty($this->projectPath)) {
-                $pathname = implode(DIRECTORY_SEPARATOR, [$this->projectPath, $pathname]);
+                $pathname = preg_replace('/\/*$/', '/', $this->projectPath).$pathname;
             }
 
             $content = file_get_contents($pathname);
