@@ -10,6 +10,8 @@
 
 namespace Darvin\Databaser\MySql;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * MySQL credentials
  */
@@ -70,13 +72,21 @@ class MySqlCredentials
     private $password;
 
     /**
-     * @param array $params Symfony parameters
+     * @param string $content Symfony parameters file content
      *
      * @return MySqlCredentials
      * @throws \InvalidArgumentException
      */
-    public static function fromSymfonyParams(array $params)
+    public static function fromSymfonyParamsFile($content)
     {
+        $params = Yaml::parse($content);
+
+        if (!isset($params['parameters'])) {
+            throw new \InvalidArgumentException('Symfony parameters file is invalid: unable to find root element "parameters".');
+        }
+
+        $params = $params['parameters'];
+
         foreach (self::$requiredSymfonyParams as $param) {
             if (!isset($params[$param])) {
                 throw new \InvalidArgumentException(

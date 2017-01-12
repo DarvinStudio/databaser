@@ -12,7 +12,6 @@ namespace Darvin\Databaser\Manager;
 
 use Darvin\Databaser\MySql\MySqlCredentials;
 use Darvin\Databaser\SSH\SSHClient;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Remote manager
@@ -90,14 +89,9 @@ class RemoteManager
     public function getMySqlCredentials()
     {
         if (empty($this->mySqlCredentials)) {
-            $pathname = sprintf('%s/app/config/parameters.yml', $this->projectPath);
-            $params = Yaml::parse($this->sshClient->exec('cat '.$pathname));
-
-            if (!isset($params['parameters'])) {
-                throw new \RuntimeException(sprintf('Parameters file "%s" does not contain "parameters" root section.', $pathname));
-            }
-
-            $this->mySqlCredentials = MySqlCredentials::fromSymfonyParams($params['parameters']);
+            $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile(
+                $this->sshClient->exec(sprintf('cat %s/app/config/parameters.yml', $this->projectPath))
+            );
         }
 
         return $this->mySqlCredentials;
