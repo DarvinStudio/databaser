@@ -93,7 +93,7 @@ class SSHClient
     {
         $filename = implode(DIRECTORY_SEPARATOR, [$this->detectHomeDir(), $pathname]);
 
-        if (!$text = @file_get_contents($filename)) {
+        if (!$text = file_get_contents($filename)) {
             throw new \RuntimeException(sprintf('Unable to get key content from file "%s".', $filename));
         }
 
