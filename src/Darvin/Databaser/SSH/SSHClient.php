@@ -50,15 +50,14 @@ class SSHClient
     }
 
     /**
-     * @param string   $command  Command
-     * @param callable $callback Callback
+     * @param string $command Command
      *
      * @return string
      * @throws \RuntimeException
      */
-    public function exec($command, callable $callback = null)
+    public function exec($command)
     {
-        $output = $this->session->exec($command, $callback);
+        $output = $this->session->exec($command);
 
         if (0 !== $this->session->getExitStatus()) {
             throw new \RuntimeException($this->session->getStdError());

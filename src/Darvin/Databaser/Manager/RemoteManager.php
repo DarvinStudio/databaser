@@ -44,6 +44,34 @@ class RemoteManager extends AbstractManager
     /**
      * @return RemoteManager
      */
+    public function createDatabase()
+    {
+        $credentials = $this->getMySqlCredentials();
+
+        $command = sprintf('mysqladmin %s create %s', $credentials->toClientArgString(false), $credentials->getDbName());
+
+        $this->sshClient->exec($command);
+
+        return $this;
+    }
+
+    /**
+     * @return RemoteManager
+     */
+    public function dropDatabase()
+    {
+        $credentials = $this->getMySqlCredentials();
+
+        $command = sprintf('mysqladmin %s drop %s --force', $credentials->toClientArgString(false), $credentials->getDbName());
+
+        $this->sshClient->exec($command);
+
+        return $this;
+    }
+
+    /**
+     * @return RemoteManager
+     */
     public function dumpDatabase()
     {
         $credentials = $this->getMySqlCredentials();
@@ -68,6 +96,22 @@ class RemoteManager extends AbstractManager
     public function downloadDump($localPathname)
     {
         $this->sshClient->get($this->getDumpPathname(), $localPathname);
+
+        return $this;
+    }
+
+    /**
+     * @param string $pathname Database dump pathname
+     *
+     * @return RemoteManager
+     */
+    public function importDump($pathname)
+    {
+        $credentials = $this->getMySqlCredentials();
+
+        $command = sprintf('cat %s | gunzip | mysql %s', $pathname, $credentials->toClientArgString());
+
+        $this->sshClient->exec($command);
 
         return $this;
     }

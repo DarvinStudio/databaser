@@ -98,12 +98,12 @@ class LocalManager extends AbstractManager
     }
 
     /**
-     * @param string $filename Database dump filename
+     * @param string $pathname Database dump pathname
      *
      * @return LocalManager
      * @throws \RuntimeException
      */
-    public function importDump($filename)
+    public function importDump($pathname)
     {
         $tmp = tempnam(sys_get_temp_dir(), 'db_');
 
@@ -113,7 +113,7 @@ class LocalManager extends AbstractManager
 
         $this->filesToRemove[] = $tmp;
 
-        (new GzipArchiver())->extract($filename, $tmp);
+        (new GzipArchiver())->extract($pathname, $tmp);
 
         if (!$resource = fopen($tmp, 'r')) {
             throw new \RuntimeException(sprintf('Unable to read database dump file "%s".', $tmp));

@@ -36,8 +36,8 @@ class PullCommand extends AbstractCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $remoteManager = $this->createRemoteManager($input);
         $localManager = $this->createLocalManager($input);
+        $remoteManager = $this->createRemoteManager($input);
 
         $io->comment('Dumping remote database...');
 

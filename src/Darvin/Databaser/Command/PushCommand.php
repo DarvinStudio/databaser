@@ -36,8 +36,14 @@ class PushCommand extends AbstractCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $remoteManager = $this->createRemoteManager($input);
         $localManager = $this->createLocalManager($input);
+        $remoteManager = $this->createRemoteManager($input);
+
+        if ($localManager->databaseIsEmpty()) {
+            $io->comment('Local database is empty, exiting.');
+
+            return;
+        }
 
         $io->comment('Dumping local database...');
 
@@ -52,5 +58,17 @@ class PushCommand extends AbstractCommand
         $io->comment('Dumping remote database...');
 
         $remoteManager->dumpDatabase();
+
+        $io->comment('Dropping remote database...');
+
+        $remoteManager->dropDatabase();
+
+        $io->comment('Creating remote database...');
+
+        $remoteManager->createDatabase();
+
+        $io->comment('Importing local database dump into the remote database...');
+
+        $remoteManager->importDump($uploadPathname);
     }
 }
