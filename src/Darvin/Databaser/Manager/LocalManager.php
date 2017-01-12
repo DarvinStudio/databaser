@@ -181,7 +181,12 @@ class LocalManager implements ManagerInterface
     private function getMySqlCredentials()
     {
         if (empty($this->mySqlCredentials)) {
-            $pathname = sprintf('%s/app/config/parameters.yml', $this->projectPath);
+            $pathname = 'app/config/parameters.yml';
+
+            if (!empty($this->projectPath)) {
+                $pathname = implode(DIRECTORY_SEPARATOR, [$this->projectPath, $pathname]);
+            }
+
             $content = file_get_contents($pathname);
 
             if (false === $content) {

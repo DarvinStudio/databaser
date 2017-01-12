@@ -33,7 +33,7 @@ abstract class AbstractCommand extends Command
             new InputArgument('ssh_user', InputArgument::REQUIRED),
             new InputArgument('ssh_host', InputArgument::REQUIRED),
             new InputArgument('project_path_remote', InputArgument::REQUIRED),
-            new InputArgument('project_path_local', InputArgument::REQUIRED),
+            new InputArgument('project_path_local', InputArgument::OPTIONAL),
             new InputArgument('ssh_port', InputArgument::OPTIONAL, '', 22),
             new InputOption('ssh_key', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
         ]);
