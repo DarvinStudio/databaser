@@ -73,13 +73,26 @@ class RemoteManager extends AbstractManager
     }
 
     /**
-     * @param string $localPathname Local file pathname
+     * @param string $localPathname Database dump local pathname
      *
      * @return RemoteManager
      */
     public function downloadDump($localPathname)
     {
-        $this->sshClient->getFile($this->getDumpPathname(), $localPathname);
+        $this->sshClient->get($this->getDumpPathname(), $localPathname);
+
+        return $this;
+    }
+
+    /**
+     * @param string $localPathname  File local pathname
+     * @param string $remotePathname File remote pathname
+     *
+     * @return RemoteManager
+     */
+    public function upload($localPathname, $remotePathname)
+    {
+        $this->sshClient->put($localPathname, $remotePathname);
 
         return $this;
     }

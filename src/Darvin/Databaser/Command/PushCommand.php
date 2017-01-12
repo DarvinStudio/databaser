@@ -10,20 +10,22 @@
 
 namespace Darvin\Databaser\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Push command
  */
-class PushCommand extends Command
+class PushCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
+        parent::configure();
+
         $this->setName('push');
     }
 
@@ -32,6 +34,19 @@ class PushCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln(__METHOD__);
+        $io = new SymfonyStyle($input, $output);
+
+        $remoteManager = $this->createRemoteManager($input);
+        $localManager = $this->createLocalManager($input);
+
+        $io->comment('Dumping local database...');
+
+        $localManager->dumpDatabase();
+
+        $uploadPathname = preg_replace('/\/*$/', '/', $remoteManager->getProjectPath()).$localManager->getDumpFilename();
+
+        $io->comment('Uploading local database dump...');
+
+        $remoteManager->upload($localManager->getDumpPathname(), $uploadPathname);
     }
 }

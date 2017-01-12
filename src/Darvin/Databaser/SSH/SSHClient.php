@@ -68,16 +68,32 @@ class SSHClient
     }
 
     /**
-     * @param string $remotePathname Remote file pathname
-     * @param string $localPathname  Local file pathname
+     * @param string $remotePathname File remote pathname
+     * @param string $localPathname  File local pathname
      *
      * @return SSHClient
      * @throws \RuntimeException
      */
-    public function getFile($remotePathname, $localPathname)
+    public function get($remotePathname, $localPathname)
     {
         if (!$this->getScp()->get($remotePathname, $localPathname)) {
             throw new \RuntimeException(sprintf('Unable to get file "%s".', $remotePathname));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $localPathname  File local pathname
+     * @param string $remotePathname File remote pathname
+     *
+     * @return SSHClient
+     * @throws \RuntimeException
+     */
+    public function put($localPathname, $remotePathname)
+    {
+        if (!$this->getScp()->put($remotePathname, $localPathname, SCP::SOURCE_LOCAL_FILE)) {
+            throw new \RuntimeException(sprintf('Unable to put file "%s".', $remotePathname));
         }
 
         return $this;
