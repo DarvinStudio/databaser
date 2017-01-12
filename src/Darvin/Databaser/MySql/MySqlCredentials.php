@@ -31,6 +31,15 @@ class MySqlCredentials
     /**
      * @var array
      */
+    private static $dsnParamMap = [
+        'host'   => 'host',
+        'port'   => 'port',
+        'dbName' => 'dbname',
+    ];
+
+    /**
+     * @var array
+     */
     private static $symfonyParamMap = [
         'host'     => 'database_host',
         'port'     => 'database_port',
@@ -125,6 +134,22 @@ class MySqlCredentials
         }
 
         return implode(' ', $args);
+    }
+
+    /**
+     * @return string
+     */
+    public function toDsn()
+    {
+        $params = [];
+
+        foreach (self::$dsnParamMap as $property => $param) {
+            if (null !== $this->$property) {
+                $params[] = implode('=', [$param, $this->$property]);
+            }
+        }
+
+        return 'mysql:'.implode(';', $params);
     }
 
     /**

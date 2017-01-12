@@ -11,11 +11,12 @@
 namespace Darvin\Databaser\Manager;
 
 use Darvin\Databaser\MySql\MySqlCredentials;
+use Ifsnop\Mysqldump\Mysqldump;
 
 /**
  * Local manager
  */
-class LocalManager
+class LocalManager implements ManagerInterface
 {
     /**
      * @var string
@@ -38,10 +39,34 @@ class LocalManager
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDbName()
+    {
+        return $this->getMySqlCredentials()->getDbName();
+    }
+
+    /**
+     * @param string $filename Database dump filename
+     *
+     * @return LocalManager
+     */
+    public function dumpDatabase($filename)
+    {
+        $credentials = $this->getMySqlCredentials();
+
+        (new Mysqldump($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword(), [
+            'compress' => Mysqldump::GZIP,
+        ]))->start($filename);
+
+        return $this;
+    }
+
+    /**
      * @return \Darvin\Databaser\MySql\MySqlCredentials
      * @throws \RuntimeException
      */
-    public function getMySqlCredentials()
+    private function getMySqlCredentials()
     {
         if (empty($this->mySqlCredentials)) {
             $pathname = sprintf('%s/app/config/parameters.yml', $this->projectPath);

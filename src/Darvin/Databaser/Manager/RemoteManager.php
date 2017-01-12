@@ -16,7 +16,7 @@ use Darvin\Databaser\SSH\SSHClient;
 /**
  * Remote manager
  */
-class RemoteManager
+class RemoteManager implements ManagerInterface
 {
     /**
      * @var \Darvin\Databaser\SSH\SSHClient
@@ -46,6 +46,14 @@ class RemoteManager
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDbName()
+    {
+        return $this->getMySqlCredentials()->getDbName();
+    }
+
+    /**
      * @param string $pathname Database dump pathname
      *
      * @return RemoteManager
@@ -59,14 +67,6 @@ class RemoteManager
         $this->sshClient->exec($command);
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDbName()
-    {
-        return $this->getMySqlCredentials()->getDbName();
     }
 
     /**

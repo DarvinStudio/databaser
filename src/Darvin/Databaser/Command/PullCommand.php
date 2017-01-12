@@ -10,6 +10,8 @@
 
 namespace Darvin\Databaser\Command;
 
+use Darvin\Databaser\Manager\LocalManager;
+use Darvin\Databaser\Manager\ManagerInterface;
 use Darvin\Databaser\Manager\RemoteManager;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
@@ -60,15 +62,31 @@ class PullCommand extends Command
             $projectPathRemote
         );
 
-        $filename = sprintf('%s_%s.sql.gz', $remoteManager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
-        $pathname = implode(DIRECTORY_SEPARATOR, [$projectPathRemote, $filename]);
+        $filenameRemote = $this->createDumpFilename($remoteManager);
+        $pathnameRemote = implode(DIRECTORY_SEPARATOR, [$projectPathRemote, $filenameRemote]);
 
-        $io->comment(sprintf('Dumping remote database to file "%s"...', $filename));
+        $io->comment('Dumping remote database...');
 
-        $remoteManager->dumpDatabase($pathname);
+        $remoteManager->dumpDatabase($pathnameRemote);
 
         $io->comment('Downloading remote database dump...');
 
-        $remoteManager->getFile($pathname, $filename);
+        $remoteManager->getFile($pathnameRemote, $filenameRemote);
+
+        $localManager = new LocalManager($input->getArgument('project_path_local'));
+
+        $io->comment('Dumping local database...');
+
+        $localManager->dumpDatabase($this->createDumpFilename($localManager));
+    }
+
+    /**
+     * @param \Darvin\Databaser\Manager\ManagerInterface $manager Manager
+     *
+     * @return string
+     */
+    private function createDumpFilename(ManagerInterface $manager)
+    {
+        return sprintf('%s_%s.sql.gz', $manager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
     }
 }
