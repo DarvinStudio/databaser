@@ -29,6 +29,11 @@ class LocalManager implements ManagerInterface
     private $mySqlCredentials;
 
     /**
+     * @var \PDO
+     */
+    private $pdo;
+
+    /**
      * @param string $projectPath Project path
      */
     public function __construct($projectPath)
@@ -47,25 +52,29 @@ class LocalManager implements ManagerInterface
     }
 
     /**
-     * @return bool
+     * @return LocalManager
      */
-    public function databaseExists()
+    public function clearDatabase()
     {
-        $stmt = $this->getPdo(false)->prepare('SHOW DATABASES LIKE :db_name');
-        $stmt->bindValue('db_name', $this->getDbName());
-        $stmt->execute();
+        $pdo = $this->getPdo();
 
-        return $stmt->rowCount() > 0;
+        $pdo->query('SET FOREIGN_KEY_CHECKS = 0');
+
+        foreach ($pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN) as $table) {
+            $pdo->query('DROP TABLE '.$table);
+        }
+
+        $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
+
+        return $this;
     }
 
     /**
-     * @return LocalManager
+     * @return bool
      */
-    public function dropDatabase()
+    public function databaseIsEmpty()
     {
-        $this->getPdo(false)->query('DROP DATABASE '.$this->getDbName());
-
-        return $this;
+        return 0 === $this->getPdo()->query('SHOW TABLES')->rowCount();
     }
 
     /**
@@ -85,17 +94,17 @@ class LocalManager implements ManagerInterface
     }
 
     /**
-     * @param bool $selectDb Whether to select database
-     *
      * @return \PDO
      */
-    private function getPdo($selectDb = true)
+    private function getPdo()
     {
-        $credentials = $this->getMySqlCredentials();
-        $pdo = new \PDO($credentials->toDsn($selectDb), $credentials->getUser(), $credentials->getPassword());
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        if (empty($this->pdo)) {
+            $credentials = $this->getMySqlCredentials();
+            $this->pdo = new \PDO($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword());
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        }
 
-        return $pdo;
+        return $this->pdo;
     }
 
     /**

@@ -137,18 +137,13 @@ class MySqlCredentials
     }
 
     /**
-     * @param bool $includeDbName Whether to include database name
-     *
      * @return string
      */
-    public function toDsn($includeDbName = true)
+    public function toDsn()
     {
         $params = [];
 
         foreach (self::$dsnParamMap as $property => $param) {
-            if ('dbName' === $property && !$includeDbName) {
-                continue;
-            }
             if (null !== $this->$property) {
                 $params[] = implode('=', [$param, $this->$property]);
             }

@@ -75,14 +75,14 @@ class PullCommand extends Command
 
         $localManager = new LocalManager($input->getArgument('project_path_local'));
 
-        if ($localManager->databaseExists()) {
+        if (!$localManager->databaseIsEmpty()) {
             $io->comment('Dumping local database...');
 
             $localManager->dumpDatabase($this->createDumpFilename($localManager));
 
             $io->comment('Dropping local database...');
 
-            $localManager->dropDatabase();
+            $localManager->clearDatabase();
         }
     }
 
