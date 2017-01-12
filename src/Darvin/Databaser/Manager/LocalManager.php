@@ -47,6 +47,28 @@ class LocalManager implements ManagerInterface
     }
 
     /**
+     * @return bool
+     */
+    public function databaseExists()
+    {
+        $stmt = $this->getPdo(false)->prepare('SHOW DATABASES LIKE :db_name');
+        $stmt->bindValue('db_name', $this->getDbName());
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * @return LocalManager
+     */
+    public function dropDatabase()
+    {
+        $this->getPdo(false)->query('DROP DATABASE '.$this->getDbName());
+
+        return $this;
+    }
+
+    /**
      * @param string $filename Database dump filename
      *
      * @return LocalManager
@@ -60,6 +82,20 @@ class LocalManager implements ManagerInterface
         ]))->start($filename);
 
         return $this;
+    }
+
+    /**
+     * @param bool $selectDb Whether to select database
+     *
+     * @return \PDO
+     */
+    private function getPdo($selectDb = true)
+    {
+        $credentials = $this->getMySqlCredentials();
+        $pdo = new \PDO($credentials->toDsn($selectDb), $credentials->getUser(), $credentials->getPassword());
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
     }
 
     /**
