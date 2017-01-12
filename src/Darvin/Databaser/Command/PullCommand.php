@@ -80,7 +80,7 @@ class PullCommand extends Command
 
             $localManager->dumpDatabase($this->createDumpFilename($localManager));
 
-            $io->comment('Dropping local database...');
+            $io->comment('Clearing local database...');
 
             $localManager->clearDatabase();
         }
