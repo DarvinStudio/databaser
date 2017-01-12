@@ -74,7 +74,7 @@ class SSHClient
      * @return SSHClient
      * @throws \RuntimeException
      */
-    public function get($remotePathname, $localPathname)
+    public function getFile($remotePathname, $localPathname)
     {
         if (!$this->getScp()->get($remotePathname, $localPathname)) {
             throw new \RuntimeException(sprintf('Unable to get file "%s".', $remotePathname));

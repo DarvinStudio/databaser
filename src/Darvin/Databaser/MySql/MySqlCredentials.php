@@ -106,7 +106,10 @@ class MySqlCredentials
         $args = [];
 
         foreach (self::$clientArgMap as $property => $arg) {
-            if (null !== $this->$property && ($includeDbName || 'dbName' !== $property)) {
+            if ('dbName' === $property && !$includeDbName) {
+                continue;
+            }
+            if (null !== $this->$property) {
                 $args[] = '-'.$arg.$this->$property;
             }
         }

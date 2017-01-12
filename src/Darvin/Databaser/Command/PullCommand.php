@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Pull command
@@ -45,6 +46,8 @@ class PullCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+
         $projectPathRemote = $input->getArgument('project_path_remote');
 
         $remoteManager = new RemoteManager(
@@ -60,8 +63,12 @@ class PullCommand extends Command
         $filename = sprintf('%s_%s.sql.gz', $remoteManager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
         $pathname = implode(DIRECTORY_SEPARATOR, [$projectPathRemote, $filename]);
 
-        $remoteManager
-            ->dumpDatabase($pathname)
-            ->getFile($pathname, $filename);
+        $io->comment(sprintf('Dumping remote database to file "%s"...', $filename));
+
+        $remoteManager->dumpDatabase($pathname);
+
+        $io->comment('Downloading remote database dump...');
+
+        $remoteManager->getFile($pathname, $filename);
     }
 }

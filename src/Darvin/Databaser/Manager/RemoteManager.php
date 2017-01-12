@@ -36,7 +36,7 @@ class RemoteManager
 
     /**
      * @param \Darvin\Databaser\SSH\SSHClient $sshClient   SSH client
-     * @param string                          $projectPath Remote project path
+     * @param string                          $projectPath Project path
      */
     public function __construct(SSHClient $sshClient, $projectPath)
     {
@@ -78,7 +78,7 @@ class RemoteManager
      */
     public function getFile($remotePathname, $localPathname)
     {
-        $this->sshClient->get($remotePathname, $localPathname);
+        $this->sshClient->getFile($remotePathname, $localPathname);
 
         return $this;
     }
