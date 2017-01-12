@@ -63,11 +63,13 @@ class LocalManager extends AbstractManager
         $pdo = $this->getPdo();
 
         $pdo->query('SET FOREIGN_KEY_CHECKS = 0');
+        $pdo->beginTransaction();
 
         foreach ($pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN) as $table) {
             $pdo->query('DROP TABLE '.$table);
         }
 
+        $pdo->commit();
         $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
 
         return $this;
@@ -120,6 +122,7 @@ class LocalManager extends AbstractManager
         $pdo = $this->getPdo();
 
         $pdo->query('SET FOREIGN_KEY_CHECKS = 0');
+        $pdo->beginTransaction();
 
         $query = '';
 
@@ -139,6 +142,7 @@ class LocalManager extends AbstractManager
             }
         }
 
+        $pdo->commit();
         $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
 
         return $this;
