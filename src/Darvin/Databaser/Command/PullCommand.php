@@ -43,12 +43,7 @@ class PullCommand extends AbstractCommand
 
         $remoteManager->dumpDatabase();
 
-        $downloadPathname = $remoteManager->getDumpFilename();
-        $projectPathLocal = $localManager->getProjectPath();
-
-        if (!empty($projectPathLocal)) {
-            $downloadPathname = preg_replace('/\/*$/', '/', $projectPathLocal).$downloadPathname;
-        }
+        $downloadPathname = $localManager->getProjectPath().$remoteManager->getDumpFilename();
 
         $io->comment('Downloading remote database dump...');
 

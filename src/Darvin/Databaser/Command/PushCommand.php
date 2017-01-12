@@ -43,7 +43,7 @@ class PushCommand extends AbstractCommand
 
         $localManager->dumpDatabase();
 
-        $uploadPathname = preg_replace('/\/*$/', '/', $remoteManager->getProjectPath()).$localManager->getDumpFilename();
+        $uploadPathname = $remoteManager->getProjectPath().$localManager->getDumpFilename();
 
         $io->comment('Uploading local database dump...');
 

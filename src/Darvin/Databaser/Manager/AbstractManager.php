@@ -35,6 +35,10 @@ abstract class AbstractManager
      */
     public function __construct($projectPath)
     {
+        if (!empty($projectPath)) {
+            $projectPath = preg_replace('/\/*$/', '/', $projectPath);
+        }
+
         $this->projectPath = $projectPath;
 
         $this->dumpFilename = $this->dumpPathname = null;
@@ -46,13 +50,7 @@ abstract class AbstractManager
     public function getDumpPathname()
     {
         if (empty($this->dumpPathname)) {
-            $pathname = $this->getDumpFilename();
-
-            if (!empty($this->projectPath)) {
-                $pathname = preg_replace('/\/*$/', '/', $this->projectPath).$pathname;
-            }
-
-            $this->dumpPathname = $pathname;
+            $this->dumpPathname = $this->projectPath.$this->getDumpFilename();
         }
 
         return $this->dumpPathname;

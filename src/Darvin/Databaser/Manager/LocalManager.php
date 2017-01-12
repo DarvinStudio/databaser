@@ -150,11 +150,7 @@ class LocalManager extends AbstractManager
     protected function getMySqlCredentials()
     {
         if (empty($this->mySqlCredentials)) {
-            $pathname = 'app/config/parameters.yml';
-
-            if (!empty($this->projectPath)) {
-                $pathname = preg_replace('/\/*$/', '/', $this->projectPath).$pathname;
-            }
+            $pathname = $this->projectPath.'app/config/parameters.yml';
 
             $content = file_get_contents($pathname);
 
