@@ -16,7 +16,7 @@ use Darvin\Databaser\SSH\SSHClient;
 /**
  * Remote manager
  */
-class RemoteManager implements ManagerInterface
+class RemoteManager extends AbstractManager
 {
     /**
      * @var \Darvin\Databaser\SSH\SSHClient
@@ -48,21 +48,24 @@ class RemoteManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getDbName()
+    public function getProjectPath()
     {
-        return $this->getMySqlCredentials()->getDbName();
+        return $this->projectPath;
     }
 
     /**
-     * @param string $pathname Database dump pathname
-     *
      * @return RemoteManager
      */
-    public function dumpDatabase($pathname)
+    public function dumpDatabase()
     {
         $credentials = $this->getMySqlCredentials();
 
-        $command = sprintf('mysqldump %s %s | gzip -c > %s', $credentials->toClientArgString(false), $credentials->getDbName(), $pathname);
+        $command = sprintf(
+            'mysqldump %s %s | gzip -c > %s',
+            $credentials->toClientArgString(false),
+            $credentials->getDbName(),
+            $this->getDumpPathname()
+        );
 
         $this->sshClient->exec($command);
 
@@ -70,23 +73,21 @@ class RemoteManager implements ManagerInterface
     }
 
     /**
-     * @param string $remotePathname Remote file pathname
-     * @param string $localPathname  Local file pathname
+     * @param string $localPathname Local file pathname
      *
      * @return RemoteManager
      */
-    public function getFile($remotePathname, $localPathname)
+    public function downloadDump($localPathname)
     {
-        $this->sshClient->getFile($remotePathname, $localPathname);
+        $this->sshClient->getFile($this->getDumpPathname(), $localPathname);
 
         return $this;
     }
 
     /**
-     * @return \Darvin\Databaser\MySql\MySqlCredentials
-     * @throws \RuntimeException
+     * {@inheritdoc}
      */
-    public function getMySqlCredentials()
+    protected function getMySqlCredentials()
     {
         if (empty($this->mySqlCredentials)) {
             $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile(

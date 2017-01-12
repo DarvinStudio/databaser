@@ -11,7 +11,6 @@
 namespace Darvin\Databaser\Command;
 
 use Darvin\Databaser\Manager\LocalManager;
-use Darvin\Databaser\Manager\ManagerInterface;
 use Darvin\Databaser\Manager\RemoteManager;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
@@ -37,16 +36,6 @@ abstract class AbstractCommand extends Command
             new InputArgument('ssh_port', InputArgument::OPTIONAL, '', 22),
             new InputOption('ssh_key', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
         ]);
-    }
-
-    /**
-     * @param \Darvin\Databaser\Manager\ManagerInterface $manager Manager
-     *
-     * @return string
-     */
-    protected function createDumpFilename(ManagerInterface $manager)
-    {
-        return sprintf('%s_%s.sql.gz', $manager->getDbName(), (new \DateTime())->format('d-m-Y_H-i-s'));
     }
 
     /**

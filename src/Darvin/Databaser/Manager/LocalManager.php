@@ -17,7 +17,7 @@ use Ifsnop\Mysqldump\Mysqldump;
 /**
  * Local manager
  */
-class LocalManager implements ManagerInterface
+class LocalManager extends AbstractManager
 {
     /**
      * @var string
@@ -63,9 +63,9 @@ class LocalManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getDbName()
+    public function getProjectPath()
     {
-        return $this->getMySqlCredentials()->getDbName();
+        return $this->projectPath;
     }
 
     /**
@@ -95,17 +95,15 @@ class LocalManager implements ManagerInterface
     }
 
     /**
-     * @param string $filename Database dump filename
-     *
      * @return LocalManager
      */
-    public function dumpDatabase($filename)
+    public function dumpDatabase()
     {
         $credentials = $this->getMySqlCredentials();
 
         (new Mysqldump($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword(), [
             'compress' => Mysqldump::GZIP,
-        ]))->start($filename);
+        ]))->start($this->getDumpPathname());
 
         return $this;
     }
@@ -160,25 +158,9 @@ class LocalManager implements ManagerInterface
     }
 
     /**
-     * @return \PDO
+     * {@inheritdoc}
      */
-    private function getPdo()
-    {
-        if (empty($this->pdo)) {
-            $credentials = $this->getMySqlCredentials();
-            $this->pdo = new \PDO($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword());
-            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $this->pdo->query('SET NAMES UTF8');
-        }
-
-        return $this->pdo;
-    }
-
-    /**
-     * @return \Darvin\Databaser\MySql\MySqlCredentials
-     * @throws \RuntimeException
-     */
-    private function getMySqlCredentials()
+    protected function getMySqlCredentials()
     {
         if (empty($this->mySqlCredentials)) {
             $pathname = 'app/config/parameters.yml';
@@ -197,5 +179,21 @@ class LocalManager implements ManagerInterface
         }
 
         return $this->mySqlCredentials;
+    }
+
+    /**
+     * @return \PDO
+     */
+    private function getPdo()
+    {
+        if (empty($this->pdo)) {
+            $credentials = $this->getMySqlCredentials();
+
+            $this->pdo = new \PDO($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword());
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo->query('SET NAMES UTF8');
+        }
+
+        return $this->pdo;
     }
 }

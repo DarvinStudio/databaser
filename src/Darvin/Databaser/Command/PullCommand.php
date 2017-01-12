@@ -38,23 +38,27 @@ class PullCommand extends AbstractCommand
 
         $remoteManager = $this->createRemoteManager($input);
 
-        $filename = $this->createDumpFilename($remoteManager);
-        $pathname = implode(DIRECTORY_SEPARATOR, [$input->getArgument('project_path_remote'), $filename]);
-
         $io->comment('Dumping remote database...');
 
-        $remoteManager->dumpDatabase($pathname);
+        $remoteManager->dumpDatabase();
+
+        $localManager = $this->createLocalManager($input);
+
+        $downloadPathname = $remoteManager->getDumpFilename();
+        $projectPathLocal = $localManager->getProjectPath();
+
+        if (!empty($projectPathLocal)) {
+            $downloadPathname = preg_replace('/\/*$/', '/', $projectPathLocal).$downloadPathname;
+        }
 
         $io->comment('Downloading remote database dump...');
 
-        $remoteManager->getFile($pathname, $filename);
-
-        $localManager = $this->createLocalManager($input);
+        $remoteManager->downloadDump($downloadPathname);
 
         if (!$localManager->databaseIsEmpty()) {
             $io->comment('Dumping local database...');
 
-            $localManager->dumpDatabase($this->createDumpFilename($localManager));
+            $localManager->dumpDatabase();
 
             $io->comment('Clearing local database...');
 
@@ -63,6 +67,6 @@ class PullCommand extends AbstractCommand
 
         $io->comment('Importing remote database dump into the local database...');
 
-        $localManager->importDump($filename);
+        $localManager->importDump($downloadPathname);
     }
 }
