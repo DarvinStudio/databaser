@@ -12,8 +12,10 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Darvin\Databaser\Command\PullCommand;
+use Darvin\Databaser\Command\PushCommand;
 use Symfony\Component\Console\Application;
 
 $app = new Application('Databaser', '@package_version@');
 $app->add(new PullCommand());
+$app->add(new PushCommand());
 $app->run();
