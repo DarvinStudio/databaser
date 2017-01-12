@@ -1,10 +1,18 @@
 {
-    "directories": [
-        "src",
-        "vendor"
-    ],
     "main": "bin/databaser",
+    "directories": [
+        "src"
+    ],
+    "finder": [
+        {
+            "in": "vendor",
+            "exclude": ["tests", "Test", "Tests"],
+            "name": "*.php"
+        }
+    ],
     "output": "databaser.phar",
-    "stub": true,
-    "git-version": "package_version"
+    "compactors": "Herrera\\Box\\Compactor\\Php",
+    "compression": "BZ2",
+    "git-version": "package_version",
+    "stub": true
 }
