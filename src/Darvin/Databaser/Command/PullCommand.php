@@ -62,16 +62,16 @@ class PullCommand extends Command
             $projectPathRemote
         );
 
-        $filenameRemote = $this->createDumpFilename($remoteManager);
-        $pathnameRemote = implode(DIRECTORY_SEPARATOR, [$projectPathRemote, $filenameRemote]);
+        $filename = $this->createDumpFilename($remoteManager);
+        $pathname = implode(DIRECTORY_SEPARATOR, [$projectPathRemote, $filename]);
 
         $io->comment('Dumping remote database...');
 
-        $remoteManager->dumpDatabase($pathnameRemote);
+        $remoteManager->dumpDatabase($pathname);
 
         $io->comment('Downloading remote database dump...');
 
-        $remoteManager->getFile($pathnameRemote, $filenameRemote);
+        $remoteManager->getFile($pathname, $filename);
 
         $localManager = new LocalManager($input->getArgument('project_path_local'));
 
@@ -84,6 +84,10 @@ class PullCommand extends Command
 
             $localManager->clearDatabase();
         }
+
+        $io->comment('Importing remote database dump into the local database...');
+
+        $localManager->importDump($filename);
     }
 
     /**

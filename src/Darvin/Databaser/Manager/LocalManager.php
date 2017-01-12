@@ -10,6 +10,7 @@
 
 namespace Darvin\Databaser\Manager;
 
+use Darvin\Databaser\Archiver\GzipArchiver;
 use Darvin\Databaser\MySql\MySqlCredentials;
 use Ifsnop\Mysqldump\Mysqldump;
 
@@ -34,13 +35,29 @@ class LocalManager implements ManagerInterface
     private $pdo;
 
     /**
+     * @var string[]
+     */
+    private $filesToRemove;
+
+    /**
      * @param string $projectPath Project path
      */
     public function __construct($projectPath)
     {
         $this->projectPath = $projectPath;
 
-        $this->mySqlCredentials = null;
+        $this->mySqlCredentials = $this->pdo = null;
+        $this->filesToRemove = [];
+    }
+
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        foreach ($this->filesToRemove as $pathname) {
+            @unlink($pathname);
+        }
     }
 
     /**
@@ -89,6 +106,55 @@ class LocalManager implements ManagerInterface
         (new Mysqldump($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword(), [
             'compress' => Mysqldump::GZIP,
         ]))->start($filename);
+
+        return $this;
+    }
+
+    /**
+     * @param string $filename Database dump filename
+     *
+     * @return LocalManager
+     * @throws \RuntimeException
+     */
+    public function importDump($filename)
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'db_');
+
+        if (false === $tmp) {
+            throw new \RuntimeException('Unable to create temporary file.');
+        }
+
+        $this->filesToRemove[] = $tmp;
+
+        (new GzipArchiver())->extract($filename, $tmp);
+
+        if (!$resource = fopen($tmp, 'r')) {
+            throw new \RuntimeException(sprintf('Unable to read database dump file "%s".', $tmp));
+        }
+
+        $pdo = $this->getPdo();
+
+        $pdo->query('SET FOREIGN_KEY_CHECKS = 0');
+
+        $query = '';
+
+        while ($line = fgets($resource)) {
+            if (0 === strpos($line, '/*') || 0 === strpos($line, '--')) {
+                continue;
+            }
+
+            $line = trim($line);
+
+            $query .= $line;
+
+            if (preg_match('/;$/', $line)) {
+                $pdo->query($query);
+
+                $query = '';
+            }
+        }
+
+        $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
 
         return $this;
     }
