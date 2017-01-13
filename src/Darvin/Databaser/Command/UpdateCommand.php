@@ -37,6 +37,6 @@ class UpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         (new Manager(Manifest::loadFile('http://darvinstudio.github.io/databaser/manifest.json')))
-            ->update($this->getApplication()->getVersion(), true);
+            ->update($this->getApplication()->getVersion());
     }
 }
