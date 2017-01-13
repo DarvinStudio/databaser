@@ -38,8 +38,8 @@ DESCRIPTION
 Symfony project local path absolute or relative to home directory, if empty - current directory
 DESCRIPTION
             ),
-            new InputArgument('ssh_port', InputArgument::OPTIONAL, 'SSH server port', 22),
-            new InputOption('ssh_key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private key pathname relative to home directory', '.ssh/id_rsa'),
+            new InputOption('key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private RSA key pathname relative to home directory', '.ssh/id_rsa'),
+            new InputOption('port', 'P', InputOption::VALUE_OPTIONAL, 'SSH server port', 22),
         ]);
     }
 
@@ -64,7 +64,7 @@ DESCRIPTION
 
         return new RemoteManager(
             $input->getArgument('project_path_remote'),
-            new SSHClient($user, $host, $input->getOption('ssh_key'), $input->getArgument('ssh_port'))
+            new SSHClient($user, $host, $input->getOption('key'), $input->getOption('port'))
         );
     }
 
