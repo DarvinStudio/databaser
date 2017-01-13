@@ -21,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class UpdateCommand extends Command
 {
+    const MANIFEST_FILE = 'http://darvinstudio.github.io/databaser/manifest.json';
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +38,6 @@ class UpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        (new Manager(Manifest::loadFile('http://darvinstudio.github.io/databaser/manifest.json')))
-            ->update($this->getApplication()->getVersion());
+        (new Manager(Manifest::loadFile(self::MANIFEST_FILE)))->update($this->getApplication()->getVersion(), false, true);
     }
 }
