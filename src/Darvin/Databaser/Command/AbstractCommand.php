@@ -17,6 +17,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Command abstract implementation
@@ -39,6 +41,7 @@ Symfony project local path absolute or relative to home directory, if empty - cu
 DESCRIPTION
             ),
             new InputOption('key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private RSA key pathname relative to home directory', '.ssh/id_rsa'),
+            new InputOption('password', 'p', InputOption::VALUE_NONE, 'Ask for SSH or SSH key password'),
             new InputOption('port', 'P', InputOption::VALUE_OPTIONAL, 'SSH server port', 22),
         ]);
     }
@@ -54,17 +57,24 @@ DESCRIPTION
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input Input
+     * @param \Symfony\Component\Console\Input\InputInterface   $input  Input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output Output
      *
      * @return \Darvin\Databaser\Manager\RemoteManager
      */
-    protected function createRemoteManager(InputInterface $input)
+    protected function createRemoteManager(InputInterface $input, OutputInterface $output)
     {
         list($user, $host) = $this->getUserAndHost($input);
 
         return new RemoteManager(
             $input->getArgument('project_path_remote'),
-            new SSHClient($user, $host, $input->getOption('key'), $input->getOption('port'))
+            new SSHClient(
+                $user,
+                $host,
+                $input->getOption('key'),
+                $input->getOption('password') ? (new SymfonyStyle($input, $output))->ask('Please enter password') : null,
+                $input->getOption('port')
+            )
         );
     }
 

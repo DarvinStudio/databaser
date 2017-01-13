@@ -39,7 +39,7 @@ class PushCommand extends AbstractCommand
         $io = new SymfonyStyle($input, $output);
 
         $localManager = $this->createLocalManager($input);
-        $remoteManager = $this->createRemoteManager($input);
+        $remoteManager = $this->createRemoteManager($input, $output);
 
         $uploadPathname = $remoteManager->getProjectPath().$localManager->getDumpFilename();
 

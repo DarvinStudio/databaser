@@ -33,16 +33,19 @@ class SSHClient
      * @param string $user        Username
      * @param string $host        Hostname
      * @param string $keyPathname Private key file pathname relative to home directory
+     * @param string $password    Password
      * @param int    $port        Port
      *
      * @throws \RuntimeException
      */
-    public function __construct($user, $host, $keyPathname, $port = 22)
+    public function __construct($user, $host, $keyPathname, $password, $port)
     {
         $this->session = new SSH2($host, $port);
         $this->session->enableQuietMode();
 
-        if (!$this->session->login($user, $this->getKey($keyPathname))) {
+        $key = $this->getKey($keyPathname, $password);
+
+        if (!$this->session->login($user, !empty($key) ? $key : $password)) {
             throw new \RuntimeException(sprintf('Unable to login at host "%s" as user "%s".', $host, $user));
         }
 
@@ -100,22 +103,26 @@ class SSHClient
 
     /**
      * @param string $pathname Private key file pathname relative to home directory
+     * @param string $password Password
      *
      * @return \phpseclib\Crypt\RSA
      * @throws \RuntimeException
      */
-    private function getKey($pathname)
+    private function getKey($pathname, $password)
     {
         $filename = implode(DIRECTORY_SEPARATOR, [$this->detectHomeDir(), $pathname]);
 
         if (!$text = @file_get_contents($filename)) {
-            throw new \RuntimeException(sprintf('Unable to get key content from file "%s".', $filename));
+            return null;
         }
 
         $key = new RSA();
 
         if (!$key->loadKey($text)) {
             throw new \RuntimeException(sprintf('Unable to create key object from file "%s".', $filename));
+        }
+        if (!empty($password)) {
+            $key->setPassword($password);
         }
 
         return $key;
