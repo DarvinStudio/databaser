@@ -26,7 +26,9 @@ class PushCommand extends AbstractCommand
     {
         parent::configure();
 
-        $this->setName('push');
+        $this
+            ->setName('push')
+            ->setDescription('Pushes local database into the remote database');
     }
 
     /**
@@ -39,6 +41,8 @@ class PushCommand extends AbstractCommand
         $localManager = $this->createLocalManager($input);
         $remoteManager = $this->createRemoteManager($input);
 
+        $uploadPathname = $remoteManager->getProjectPath().$localManager->getDumpFilename();
+
         if ($localManager->databaseIsEmpty()) {
             $io->comment('Local database is empty, exiting.');
 
@@ -46,29 +50,21 @@ class PushCommand extends AbstractCommand
         }
 
         $io->comment('Dumping local database...');
-
         $localManager->dumpDatabase();
 
-        $uploadPathname = $remoteManager->getProjectPath().$localManager->getDumpFilename();
-
         $io->comment('Uploading local database dump...');
-
         $remoteManager->upload($localManager->getDumpPathname(), $uploadPathname);
 
         $io->comment('Dumping remote database...');
-
         $remoteManager->dumpDatabase();
 
         $io->comment('Dropping remote database...');
-
         $remoteManager->dropDatabase();
 
         $io->comment('Creating remote database...');
-
         $remoteManager->createDatabase();
 
         $io->comment('Importing local database dump into the remote database...');
-
         $remoteManager->importDump($uploadPathname);
     }
 }

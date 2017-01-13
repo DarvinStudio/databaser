@@ -26,7 +26,9 @@ class PullCommand extends AbstractCommand
     {
         parent::configure();
 
-        $this->setName('pull');
+        $this
+            ->setName('pull')
+            ->setDescription('Pulls remote database into the local database');
     }
 
     /**
@@ -39,28 +41,23 @@ class PullCommand extends AbstractCommand
         $localManager = $this->createLocalManager($input);
         $remoteManager = $this->createRemoteManager($input);
 
-        $io->comment('Dumping remote database...');
-
-        $remoteManager->dumpDatabase();
-
         $downloadPathname = $localManager->getProjectPath().$remoteManager->getDumpFilename();
 
-        $io->comment('Downloading remote database dump...');
+        $io->comment('Dumping remote database...');
+        $remoteManager->dumpDatabase();
 
+        $io->comment('Downloading remote database dump...');
         $remoteManager->downloadDump($downloadPathname);
 
         if (!$localManager->databaseIsEmpty()) {
             $io->comment('Dumping local database...');
-
             $localManager->dumpDatabase();
 
             $io->comment('Clearing local database...');
-
             $localManager->clearDatabase();
         }
 
         $io->comment('Importing remote database dump into the local database...');
-
         $localManager->importDump($downloadPathname);
     }
 }
