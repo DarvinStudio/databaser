@@ -29,11 +29,17 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this->setDefinition([
-            new InputArgument('user@host', InputArgument::REQUIRED),
-            new InputArgument('project_path_remote', InputArgument::REQUIRED),
-            new InputArgument('project_path_local', InputArgument::OPTIONAL),
-            new InputArgument('ssh_port', InputArgument::OPTIONAL, '', 22),
-            new InputOption('ssh_key', 'k', InputOption::VALUE_OPTIONAL, '', '.ssh/id_rsa'),
+            new InputArgument('user@host', InputArgument::REQUIRED, 'SSH user@host'),
+            new InputArgument('project_path_remote', InputArgument::REQUIRED, <<<DESCRIPTION
+Symfony project remote path absolute or relative to home directory
+DESCRIPTION
+            ),
+            new InputArgument('project_path_local', InputArgument::OPTIONAL, <<<DESCRIPTION
+Symfony project local path absolute or relative to home directory, if empty - current directory
+DESCRIPTION
+            ),
+            new InputArgument('ssh_port', InputArgument::OPTIONAL, 'SSH server port', 22),
+            new InputOption('ssh_key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private key pathname relative to home directory', '.ssh/id_rsa'),
         ]);
     }
 
