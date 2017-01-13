@@ -29,8 +29,7 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this->setDefinition([
-            new InputArgument('ssh_user', InputArgument::REQUIRED),
-            new InputArgument('ssh_host', InputArgument::REQUIRED),
+            new InputArgument('user@host', InputArgument::REQUIRED),
             new InputArgument('project_path_remote', InputArgument::REQUIRED),
             new InputArgument('project_path_local', InputArgument::OPTIONAL),
             new InputArgument('ssh_port', InputArgument::OPTIONAL, '', 22),
@@ -55,14 +54,28 @@ abstract class AbstractCommand extends Command
      */
     protected function createRemoteManager(InputInterface $input)
     {
+        list($user, $host) = $this->getUserAndHost($input);
+
         return new RemoteManager(
             $input->getArgument('project_path_remote'),
-            new SSHClient(
-                $input->getArgument('ssh_user'),
-                $input->getArgument('ssh_host'),
-                $input->getOption('ssh_key'),
-                $input->getArgument('ssh_port')
-            )
+            new SSHClient($user, $host, $input->getOption('ssh_key'), $input->getArgument('ssh_port'))
         );
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input Input
+     *
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    private function getUserAndHost(InputInterface $input)
+    {
+        $text = $input->getArgument('user@host');
+
+        if (1 !== substr_count($text, '@')) {
+            throw new \InvalidArgumentException(sprintf('Argument "user@host" must contain single "@" symbol, got "%s".', $text));
+        }
+
+        return explode('@', $text);
     }
 }

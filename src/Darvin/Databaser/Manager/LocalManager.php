@@ -156,7 +156,7 @@ class LocalManager extends AbstractManager
         if (empty($this->mySqlCredentials)) {
             $pathname = $this->projectPath.'app/config/parameters.yml';
 
-            $content = file_get_contents($pathname);
+            $content = @file_get_contents($pathname);
 
             if (false === $content) {
                 throw new \RuntimeException(sprintf('Unable to get content of Symfony parameters file "%s".', $pathname));
