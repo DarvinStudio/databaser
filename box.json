@@ -8,6 +8,11 @@
             "in": "vendor",
             "exclude": ["tests", "Tests"],
             "name": "*.php"
+        },
+        {
+            "in": "vendor",
+            "exclude": ["tests", "Tests"],
+            "name": "*.json"
         }
     ],
     "output": "downloads/databaser.phar",
