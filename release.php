@@ -9,85 +9,40 @@
  * file that was distributed with this source code.
  */
 
-function notify($message) {
-    echo $message.PHP_EOL;
-}
-
-function error($message) {
-    notify($message);
-
-    die;
-}
-
-function getLatestVersion() {
-    $tags = run('git tag -l --sort=v:refname');
-
-    return !empty($tags) ? array_pop($tags) : '0.0.0';
-}
-
-function bumpVersion($version) {
-    return preg_replace_callback('/\d+$/', function (array $matches) {
-        return $matches[0] + 1;
-    }, $version);
-}
-
-function getFileContent($pathname) {
-    if (false === $content = @file_get_contents($pathname)) {
-        error(sprintf('Unable to get content of file "%s", exiting.', $pathname));
-    }
-
-    return $content;
-}
-
-function run($command) {
-    notify($command);
-    exec($command, $output, $exitCode);
-
-    foreach ($output as $line) {
-        echo $line.PHP_EOL;
-    }
-
-    echo PHP_EOL;
-
-    if (0 !== $exitCode) {
-        die;
-    }
-
-    return $output;
-}
-
-$latestVersion = getLatestVersion();
+$latest = latest();
 
 run('git checkout master');
 run('box build');
 
-$currentVersion = str_replace('Databaser ', '', run('php databaser.phar --version')[0]);
+$current = str_replace('Databaser ', '', run('php databaser.phar --version')[0]);
 
-if ($latestVersion === $currentVersion) {
-    error('Version has not changed, exiting.');
+if ($latest === $current) {
+    @unlink('databaser.phar');
+
+    error('Version has not changed');
 }
 
-$version = bumpVersion($latestVersion);
+$version = bump($latest);
 
 run('git tag '.$version);
 run('box build');
 run('git checkout gh-pages');
 
-$manifest = (array) json_decode(getFileContent('manifest.json'), true);
+$manifest = (array) json_decode(read('manifest.json'), true);
 
 if (json_last_error()) {
-    error(sprintf('Unable to decode manifest JSON: "%s".', json_last_error_msg()));
+    error(sprintf('Unable to decode manifest as JSON: "%s".', json_last_error_msg()));
 }
 
 $manifest[] = [
     'name'    => 'databaser.phar',
-    'sha1'    => sha1(getFileContent('databaser.phar')),
+    'sha1'    => sha1(read('databaser.phar')),
     'url'     => sprintf('http://darvinstudio.github.io/databaser/downloads/databaser-%s.phar', $version),
     'version' => $version,
 ];
 
 if (false === @file_put_contents('manifest.json', json_encode($manifest, JSON_PRETTY_PRINT))) {
-    error('Unable to write new manifest file.');
+    error('Unable to update manifest.');
 }
 
 $target = sprintf('downloads/databaser-%s.phar', $version);
@@ -99,3 +54,80 @@ if (!rename('databaser.phar', $target)) {
 run('git add '.$target);
 
 notify('Do not forget to push tag!');
+
+
+
+/**
+ * @param string $version Version to bump
+ *
+ * @return string
+ */
+function bump($version)
+{
+    return preg_replace_callback('/\d+$/', function (array $matches) { return $matches[0] + 1; }, $version);
+}
+
+/**
+ * @param string $message Error message
+ */
+function error($message)
+{
+    notify($message.', exiting.');
+
+    die;
+}
+
+/**
+ * @param string $message Notification message
+ */
+function notify($message)
+{
+    echo $message.PHP_EOL;
+}
+
+/**
+ * @return string
+ */
+function latest()
+{
+    $tags = run('git tag -l --sort=v:refname');
+
+    return !empty($tags) ? array_pop($tags) : '0.0.0';
+}
+
+/**
+ * @param string $pathname File pathname
+ *
+ * @return string
+ */
+function read($pathname)
+{
+    if (false === $content = @file_get_contents($pathname)) {
+        error(sprintf('Unable to read file "%s"', $pathname));
+    }
+
+    return $content;
+}
+
+/**
+ * @param string $command Command to run
+ *
+ * @return array
+ */
+function run($command)
+{
+    notify($command);
+    exec($command, $output, $code);
+
+    foreach ($output as $line) {
+        echo $line.PHP_EOL;
+    }
+
+    echo PHP_EOL;
+
+    if (0 !== $code) {
+        die;
+    }
+
+    return $output;
+}
