@@ -72,7 +72,7 @@ DESCRIPTION
                 $user,
                 $host,
                 $input->getOption('key'),
-                $input->getOption('password') ? (new SymfonyStyle($input, $output))->ask('Please enter password') : null,
+                $input->getOption('password') ? (new SymfonyStyle($input, $output))->askHidden('Please enter password') : null,
                 $input->getOption('port')
             )
         );
