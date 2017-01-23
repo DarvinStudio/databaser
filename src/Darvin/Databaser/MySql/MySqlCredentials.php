@@ -129,7 +129,7 @@ class MySqlCredentials
                 continue;
             }
             if (null !== $this->$property) {
-                $args[] = '-'.$arg.$this->$property;
+                $args[] = sprintf('-%s\'%s\'', $arg, $this->$property);
             }
         }
 
