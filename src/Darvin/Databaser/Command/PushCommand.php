@@ -58,6 +58,10 @@ class PushCommand extends AbstractCommand
         $io->comment('Dumping remote database...');
         $remoteManager->dumpDatabase();
 
+        if (!$io->confirm('Remote database will be dropped. Proceed?')) {
+            return;
+        }
+
         $io->comment('Dropping remote database...');
         $remoteManager->dropDatabase();
 
