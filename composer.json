@@ -1,7 +1,6 @@
 {
     "name": "darvinstudio/databaser",
     "description": "Database management utility",
-    "type": "project",
     "license": "MIT",
     "authors": [
         {
