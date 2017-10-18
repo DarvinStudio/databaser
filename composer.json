@@ -15,10 +15,12 @@
         }
     },
     "require": {
-        "herrera-io/phar-update": "^2.0",
         "ifsnop/mysqldump-php": "^2.2",
         "phpseclib/phpseclib": "^2.0",
         "symfony/console": "^3.2",
         "symfony/yaml": "^3.2"
+    },
+    "require-dev": {
+        "herrera-io/phar-update": "^2.0"
     }
 }
