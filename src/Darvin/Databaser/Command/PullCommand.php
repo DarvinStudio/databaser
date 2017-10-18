@@ -20,15 +20,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class PullCommand extends AbstractCommand
 {
     /**
+     * @param string $name Command name
+     */
+    public function __construct($name = 'pull')
+    {
+        parent::__construct($name);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         parent::configure();
 
-        $this
-            ->setName('pull')
-            ->setDescription('Pulls remote database into the local database');
+        $this->setDescription('Pulls remote database into the local database');
     }
 
     /**

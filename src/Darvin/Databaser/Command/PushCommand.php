@@ -20,15 +20,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class PushCommand extends AbstractCommand
 {
     /**
+     * @param string $name Command name
+     */
+    public function __construct($name = 'push')
+    {
+        parent::__construct($name);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         parent::configure();
 
-        $this
-            ->setName('push')
-            ->setDescription('Pushes local database into the remote database');
+        $this->setDescription('Pushes local database into the remote database');
     }
 
     /**
