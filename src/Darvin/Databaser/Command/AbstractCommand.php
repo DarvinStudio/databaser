@@ -30,12 +30,17 @@ abstract class AbstractCommand extends Command
      */
     protected function configure()
     {
+        $currentDir = $this->getCurrentDir();
+
+        $remotePathDescription = 'Symfony project remote path absolute or relative to home directory';
+
+        if (!empty($currentDir)) {
+            $remotePathDescription .= sprintf(' <comment>[default: "www/%s.%%HOST%%"]</comment>', $currentDir);
+        }
+
         $this->setDefinition([
             new InputArgument('user@host', InputArgument::REQUIRED, 'SSH user@host'),
-            new InputArgument('project_path_remote', InputArgument::REQUIRED, <<<DESCRIPTION
-Symfony project remote path absolute or relative to home directory
-DESCRIPTION
-            ),
+            new InputArgument('project_path_remote', !empty($currentDir) ? InputArgument::OPTIONAL : InputArgument::REQUIRED, $remotePathDescription),
             new InputArgument('project_path_local', InputArgument::OPTIONAL, <<<DESCRIPTION
 Symfony project local path absolute or relative to home directory, if empty - current directory
 DESCRIPTION
@@ -67,7 +72,7 @@ DESCRIPTION
         list($user, $host) = $this->getUserAndHost($input);
 
         return new RemoteManager(
-            $input->getArgument('project_path_remote'),
+            $this->getProjectPathRemote($input, $host),
             new SSHClient(
                 $user,
                 $host,
@@ -76,6 +81,23 @@ DESCRIPTION
                 $input->getOption('port')
             )
         );
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input Input
+     * @param string                                          $host  Host
+     *
+     * @return string
+     */
+    private function getProjectPathRemote(InputInterface $input, $host)
+    {
+        $path = $input->getArgument('project_path_remote');
+
+        if (!empty($path)) {
+            return $path;
+        }
+
+        return sprintf('www/%s.%s', $this->getCurrentDir(), $host);
     }
 
     /**
@@ -93,5 +115,21 @@ DESCRIPTION
         }
 
         return explode('@', $text);
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getCurrentDir()
+    {
+        $cwd = getcwd();
+
+        if (false === $cwd) {
+            return null;
+        }
+
+        $parts = explode(DIRECTORY_SEPARATOR, $cwd);
+
+        return array_pop($parts);
     }
 }
