@@ -46,5 +46,11 @@
         "sha1": "4e34f4bdb13b1c39ff6e7594f4f97b1ec5bb6081",
         "url": "http:\/\/darvinstudio.github.io\/databaser\/downloads\/databaser-0.0.8.phar",
         "version": "0.0.8"
+    },
+    {
+        "name": "databaser.phar",
+        "sha1": "d3a080d0e4f9330bd0c84c6fa2826b2c2024674f",
+        "url": "http:\/\/darvinstudio.github.io\/databaser\/downloads\/databaser-0.0.9.phar",
+        "version": "0.0.9"
     }
 ]
