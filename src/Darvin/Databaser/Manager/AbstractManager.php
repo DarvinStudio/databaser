@@ -65,7 +65,7 @@ abstract class AbstractManager
             $this->dumpFilename = sprintf(
                 '%s_%s.sql.gz',
                 $this->getMySqlCredentials()->getDbName(),
-                (new \DateTime())->format('d-m-Y_H-i-s')
+                (new \DateTime())->format('Y-m-d_H-i')
             );
         }
 
