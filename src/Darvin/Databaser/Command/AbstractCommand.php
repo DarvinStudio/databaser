@@ -115,7 +115,7 @@ abstract class AbstractCommand extends Command
         $text = $input->getArgument('user@host');
 
         if (1 !== substr_count($text, '@')) {
-            throw new \InvalidArgumentException(sprintf('Argument "user@host" must contain single "@" symbol, got "%s".', $text));
+            return ['www-data', $text];
         }
 
         return explode('@', $text);
