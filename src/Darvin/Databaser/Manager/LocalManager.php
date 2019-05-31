@@ -10,6 +10,7 @@
 
 namespace Darvin\Databaser\Manager;
 
+use Darvin\Databaser\Archiver\ArchiverInterface;
 use Darvin\Databaser\Archiver\GzipArchiver;
 use Darvin\Databaser\MySql\MySqlCredentials;
 use Ifsnop\Mysqldump\Mysqldump;
@@ -19,6 +20,11 @@ use Ifsnop\Mysqldump\Mysqldump;
  */
 class LocalManager extends AbstractManager implements LocalManagerInterface
 {
+    /**
+     * @var \Darvin\Databaser\Archiver\ArchiverInterface
+     */
+    private $archiver;
+
     /**
      * @var \Darvin\Databaser\MySql\MySqlCredentials
      */
@@ -41,7 +47,7 @@ class LocalManager extends AbstractManager implements LocalManagerInterface
     {
         parent::__construct($projectPath);
 
-        $this->mySqlCredentials = $this->pdo = null;
+        $this->archiver = $this->mySqlCredentials = $this->pdo = null;
         $this->filesToRemove = [];
     }
 
@@ -106,7 +112,7 @@ class LocalManager extends AbstractManager implements LocalManagerInterface
 
         $this->filesToRemove[] = $tmp;
 
-        (new GzipArchiver())->extract($pathname, $tmp);
+        $this->getArchiver()->extract($pathname, $tmp);
 
         if (!$resource = fopen($tmp, 'r')) {
             throw new \RuntimeException(sprintf('Unable to read database dump file "%s".', $tmp));
@@ -157,6 +163,18 @@ class LocalManager extends AbstractManager implements LocalManagerInterface
         }
 
         return $this->mySqlCredentials;
+    }
+
+    /**
+     * @return \Darvin\Databaser\Archiver\ArchiverInterface
+     */
+    private function getArchiver(): ArchiverInterface
+    {
+        if (null === $this->archiver) {
+            $this->archiver = new GzipArchiver();
+        }
+
+        return $this->archiver;
     }
 
     /**

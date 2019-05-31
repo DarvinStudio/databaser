@@ -13,7 +13,7 @@ namespace Darvin\Databaser\Archiver;
 /**
  * GZIP archiver
  */
-class GzipArchiver
+class GzipArchiver implements ArchiverInterface
 {
     /**
      * @var int
@@ -29,10 +29,7 @@ class GzipArchiver
     }
 
     /**
-     * @param string $source Archive file pathname
-     * @param string $target Target file pathname
-     *
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
     public function extract(string $source, string $target): void
     {
