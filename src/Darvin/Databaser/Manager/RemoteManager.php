@@ -16,7 +16,7 @@ use Darvin\Databaser\SSH\SSHClientInterface;
 /**
  * Remote manager
  */
-class RemoteManager extends AbstractManager
+class RemoteManager extends AbstractManager implements RemoteManagerInterface
 {
     /**
      * @var \Darvin\Databaser\SSH\SSHClientInterface
@@ -42,37 +42,33 @@ class RemoteManager extends AbstractManager
     }
 
     /**
-     * @return RemoteManager
+     * {@inheritDoc}
      */
-    public function createDatabase(): RemoteManager
+    public function createDatabase(): void
     {
         $credentials = $this->getMySqlCredentials();
 
         $command = sprintf('mysqladmin %s create %s', $credentials->toClientArgString(false), $credentials->getDbName());
 
         $this->sshClient->exec($command);
-
-        return $this;
     }
 
     /**
-     * @return RemoteManager
+     * {@inheritDoc}
      */
-    public function dropDatabase(): RemoteManager
+    public function dropDatabase(): void
     {
         $credentials = $this->getMySqlCredentials();
 
         $command = sprintf('mysqladmin %s drop %s --force', $credentials->toClientArgString(false), $credentials->getDbName());
 
         $this->sshClient->exec($command);
-
-        return $this;
     }
 
     /**
-     * @return RemoteManager
+     * {@inheritDoc}
      */
-    public function dumpDatabase(): RemoteManager
+    public function dumpDatabase(): void
     {
         $credentials = $this->getMySqlCredentials();
 
@@ -84,49 +80,34 @@ class RemoteManager extends AbstractManager
         );
 
         $this->sshClient->exec($command);
-
-        return $this;
     }
 
     /**
-     * @param string $localPathname Database dump local pathname
-     *
-     * @return RemoteManager
+     * {@inheritDoc}
      */
-    public function downloadDump(string $localPathname): RemoteManager
+    public function downloadDump(string $localPathname): void
     {
         $this->sshClient->get($this->getDumpPathname(), $localPathname);
-
-        return $this;
     }
 
     /**
-     * @param string $pathname Database dump pathname
-     *
-     * @return RemoteManager
+     * {@inheritDoc}
      */
-    public function importDump(string $pathname): RemoteManager
+    public function importDump(string $pathname): void
     {
         $credentials = $this->getMySqlCredentials();
 
         $command = sprintf('cat %s | gunzip | mysql %s', $pathname, $credentials->toClientArgString());
 
         $this->sshClient->exec($command);
-
-        return $this;
     }
 
     /**
-     * @param string $localPathname  File local pathname
-     * @param string $remotePathname File remote pathname
-     *
-     * @return RemoteManager
+     * {@inheritDoc}
      */
-    public function upload(string $localPathname, string $remotePathname): RemoteManager
+    public function upload(string $localPathname, string $remotePathname): void
     {
         $this->sshClient->put($localPathname, $remotePathname);
-
-        return $this;
     }
 
     /**

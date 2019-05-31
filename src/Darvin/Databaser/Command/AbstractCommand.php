@@ -13,6 +13,7 @@ namespace Darvin\Databaser\Command;
 use Darvin\Databaser\Manager\LocalManager;
 use Darvin\Databaser\Manager\LocalManagerInterface;
 use Darvin\Databaser\Manager\RemoteManager;
+use Darvin\Databaser\Manager\RemoteManagerInterface;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -68,9 +69,9 @@ abstract class AbstractCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface   $input  Input
      * @param \Symfony\Component\Console\Output\OutputInterface $output Output
      *
-     * @return \Darvin\Databaser\Manager\RemoteManager
+     * @return \Darvin\Databaser\Manager\RemoteManagerInterface
      */
-    protected function createRemoteManager(InputInterface $input, OutputInterface $output): RemoteManager
+    protected function createRemoteManager(InputInterface $input, OutputInterface $output): RemoteManagerInterface
     {
         list($user, $host) = $this->getUserAndHost($input);
 
