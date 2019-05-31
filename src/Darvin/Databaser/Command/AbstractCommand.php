@@ -34,13 +34,13 @@ abstract class AbstractCommand extends Command
 
         $remotePathDescription = 'Symfony project remote path absolute or relative to home directory';
 
-        if (!empty($currentDir)) {
+        if (null !== $currentDir) {
             $remotePathDescription .= sprintf(' <comment>[default: "www/%s.%%HOST%%"]</comment>', $currentDir);
         }
 
         $this->setDefinition([
             new InputArgument('user@host', InputArgument::REQUIRED, 'SSH user@host'),
-            new InputArgument('project_path_remote', !empty($currentDir) ? InputArgument::OPTIONAL : InputArgument::REQUIRED, $remotePathDescription),
+            new InputArgument('project_path_remote', null !== $currentDir ? InputArgument::OPTIONAL : InputArgument::REQUIRED, $remotePathDescription),
             new InputArgument('project_path_local', InputArgument::OPTIONAL, <<<DESCRIPTION
 Symfony project local path absolute or relative to home directory, if empty - current directory
 DESCRIPTION
@@ -93,7 +93,7 @@ DESCRIPTION
     {
         $path = $input->getArgument('project_path_remote');
 
-        if (!empty($path)) {
+        if (null !== $path) {
             return $path;
         }
 

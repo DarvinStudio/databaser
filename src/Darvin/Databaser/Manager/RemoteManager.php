@@ -29,10 +29,10 @@ class RemoteManager extends AbstractManager
     private $mySqlCredentials;
 
     /**
-     * @param string                          $projectPath Project path
+     * @param string|null                     $projectPath Project path
      * @param \Darvin\Databaser\SSH\SSHClient $sshClient   SSH client
      */
-    public function __construct(string $projectPath, SSHClient $sshClient)
+    public function __construct(?string $projectPath, SSHClient $sshClient)
     {
         parent::__construct($projectPath);
 
@@ -134,7 +134,7 @@ class RemoteManager extends AbstractManager
      */
     protected function getMySqlCredentials(): MySqlCredentials
     {
-        if (empty($this->mySqlCredentials)) {
+        if (null === $this->mySqlCredentials) {
             $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile(
                 $this->sshClient->exec(sprintf('cat %s/app/config/parameters.yml', $this->projectPath))
             );

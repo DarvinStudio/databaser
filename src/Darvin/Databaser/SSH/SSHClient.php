@@ -30,22 +30,26 @@ class SSHClient
     private $scp;
 
     /**
-     * @param string $user        Username
-     * @param string $host        Hostname
-     * @param string $keyPathname Private key file pathname relative to home directory
-     * @param string $password    Password
-     * @param int    $port        Port
+     * @param string      $user        Username
+     * @param string      $host        Hostname
+     * @param string|null $keyPathname Private key file pathname relative to home directory
+     * @param string|null $password    Password
+     * @param mixed|null  $port        Port
      *
      * @throws \RuntimeException
      */
-    public function __construct(string $user, string $host, string $keyPathname, string $password, int $port)
+    public function __construct(string $user, string $host, ?string $keyPathname = null, ?string $password = null, $port = null)
     {
+        if (null !== $port) {
+            $port = (int)$port;
+        }
+
         $this->session = new SSH2($host, $port);
         $this->session->enableQuietMode();
 
         $key = $this->getKey($keyPathname, $password);
 
-        if (!$this->session->login($user, !empty($key) ? $key : $password)) {
+        if (!$this->session->login($user, null !== $key ? $key : $password)) {
             throw new \RuntimeException(sprintf('Unable to login at host "%s" as user "%s".', $host, $user));
         }
 
@@ -121,7 +125,7 @@ class SSHClient
         if (!$key->loadKey($text)) {
             throw new \RuntimeException(sprintf('Unable to create key object from file "%s".', $filename));
         }
-        if (!empty($password)) {
+        if (null !== $password) {
             $key->setPassword($password);
         }
 

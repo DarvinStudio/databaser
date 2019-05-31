@@ -47,7 +47,7 @@ class UpdateCommand extends Command
 
         $update = $manifest->findRecent(Parser::toVersion($version), false, true);
 
-        if (empty($update)) {
+        if (null === $update) {
             $io->comment(sprintf('You are already using latest Databaser version %s.', $version));
 
             return;

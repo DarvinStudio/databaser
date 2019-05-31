@@ -37,7 +37,7 @@ class LocalManager extends AbstractManager
     /**
      * {@inheritDoc}
      */
-    public function __construct(string $projectPath)
+    public function __construct(?string $projectPath)
     {
         parent::__construct($projectPath);
 
@@ -153,7 +153,7 @@ class LocalManager extends AbstractManager
      */
     protected function getMySqlCredentials(): MySqlCredentials
     {
-        if (empty($this->mySqlCredentials)) {
+        if (null === $this->mySqlCredentials) {
             $pathname = $this->projectPath.'app/config/parameters.yml';
 
             $content = @file_get_contents($pathname);
@@ -173,7 +173,7 @@ class LocalManager extends AbstractManager
      */
     private function getPdo(): \PDO
     {
-        if (empty($this->pdo)) {
+        if (null === $this->pdo) {
             $credentials = $this->getMySqlCredentials();
 
             $this->pdo = new \PDO($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword());

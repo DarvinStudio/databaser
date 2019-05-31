@@ -33,11 +33,11 @@ abstract class AbstractManager
     protected $dumpPathname;
 
     /**
-     * @param string $projectPath Project path
+     * @param string|null $projectPath Project path
      */
-    public function __construct(string $projectPath)
+    public function __construct(?string $projectPath)
     {
-        if (!empty($projectPath)) {
+        if (null !== $projectPath) {
             $projectPath = preg_replace('/\/*$/', '/', $projectPath);
         }
 
@@ -51,7 +51,7 @@ abstract class AbstractManager
      */
     public function getDumpPathname(): string
     {
-        if (empty($this->dumpPathname)) {
+        if (null === $this->dumpPathname) {
             $this->dumpPathname = $this->projectPath.$this->getDumpFilename();
         }
 
@@ -63,7 +63,7 @@ abstract class AbstractManager
      */
     public function getDumpFilename(): string
     {
-        if (empty($this->dumpFilename)) {
+        if (null === $this->dumpFilename) {
             $this->dumpFilename = sprintf(
                 '%s_%s.sql.gz',
                 $this->getMySqlCredentials()->getDbName(),
