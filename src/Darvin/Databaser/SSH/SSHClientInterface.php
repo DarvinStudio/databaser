@@ -27,17 +27,15 @@ interface SSHClientInterface
      * @param string $remotePathname File remote pathname
      * @param string $localPathname  File local pathname
      *
-     * @return SSHClientInterface
      * @throws \RuntimeException
      */
-    public function get(string $remotePathname, string $localPathname): SSHClientInterface;
+    public function get(string $remotePathname, string $localPathname): void;
 
     /**
      * @param string $localPathname  File local pathname
      * @param string $remotePathname File remote pathname
      *
-     * @return SSHClientInterface
      * @throws \RuntimeException
      */
-    public function put(string $localPathname, string $remotePathname): SSHClientInterface;
+    public function put(string $localPathname, string $remotePathname): void;
 }

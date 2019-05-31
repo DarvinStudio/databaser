@@ -78,25 +78,21 @@ class SSHClient implements SSHClientInterface
     /**
      * {@inheritDoc}
      */
-    public function get(string $remotePathname, string $localPathname): SSHClientInterface
+    public function get(string $remotePathname, string $localPathname): void
     {
         if (!$this->getScp()->get($remotePathname, $localPathname)) {
             throw new \RuntimeException(sprintf('Unable to get file "%s".', $remotePathname));
         }
-
-        return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function put(string $localPathname, string $remotePathname): SSHClientInterface
+    public function put(string $localPathname, string $remotePathname): void
     {
         if (!$this->getScp()->put($remotePathname, $localPathname, SCP::SOURCE_LOCAL_FILE)) {
             throw new \RuntimeException(sprintf('Unable to put file "%s".', $remotePathname));
         }
-
-        return $this;
     }
 
     /**
