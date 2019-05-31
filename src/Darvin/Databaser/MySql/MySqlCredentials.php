@@ -10,6 +10,8 @@
 
 namespace Darvin\Databaser\MySql;
 
+use Nyholm\DSN;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -67,6 +69,39 @@ class MySqlCredentials
      * @var string|null
      */
     private $password;
+
+    /**
+     * @param string $content Symfony Dotenv file content
+     *
+     * @return MySqlCredentials
+     * @throws \InvalidArgumentException
+     */
+    public static function fromSymfonyDotenvFile(string $content): MySqlCredentials
+    {
+        $params = (new Dotenv())->parse($content);
+
+        if (!isset($params['DATABASE_URL'])) {
+            throw new \InvalidArgumentException('Symfony Dotenv file is invalid: unable to find parameter "DATABASE_URL".');
+        }
+
+        $url = $params['DATABASE_URL'];
+
+        $dsn = new DSN($url);
+
+        if (!$dsn->isValid()) {
+            throw new \InvalidArgumentException(sprintf('Unable to create MySQL credentials object from invalid database URL "%s".', $url));
+        }
+
+        $credentials = new self();
+
+        $credentials->host     = $dsn->getFirstHost();
+        $credentials->port     = $dsn->getFirstPort();
+        $credentials->dbName   = $dsn->getDatabase();
+        $credentials->user     = $dsn->getUsername();
+        $credentials->password = $dsn->getPassword();
+
+        return $credentials;
+    }
 
     /**
      * @param string $content Symfony parameters file content

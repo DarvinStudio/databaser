@@ -151,6 +151,16 @@ class LocalManager extends AbstractManager implements LocalManagerInterface
     protected function getMySqlCredentials(): MySqlCredentials
     {
         if (null === $this->mySqlCredentials) {
+            $pathname = $this->projectPath.'.env';
+
+            $content = @file_get_contents($pathname);
+
+            if (false !== $content) {
+                $this->mySqlCredentials = MySqlCredentials::fromSymfonyDotenvFile($content);
+
+                return $this->mySqlCredentials;
+            }
+
             $pathname = $this->projectPath.'app/config/parameters.yml';
 
             $content = @file_get_contents($pathname);

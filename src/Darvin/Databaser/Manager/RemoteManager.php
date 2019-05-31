@@ -116,6 +116,18 @@ class RemoteManager extends AbstractManager implements RemoteManagerInterface
     protected function getMySqlCredentials(): MySqlCredentials
     {
         if (null === $this->mySqlCredentials) {
+            $content = null;
+
+            try {
+                $content = $this->sshClient->exec(sprintf('cat %s/.env', $this->projectPath));
+            } catch (\RuntimeException $ex) {
+            }
+            if (null !== $content) {
+                $this->mySqlCredentials = MySqlCredentials::fromSymfonyDotenvFile($content);
+
+                return $this->mySqlCredentials;
+            }
+
             $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile(
                 $this->sshClient->exec(sprintf('cat %s/app/config/parameters.yml', $this->projectPath))
             );
