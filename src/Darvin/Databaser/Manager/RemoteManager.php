@@ -11,7 +11,7 @@
 namespace Darvin\Databaser\Manager;
 
 use Darvin\Databaser\MySql\MySqlCredentials;
-use Darvin\Databaser\SSH\SSHClient;
+use Darvin\Databaser\SSH\SSHClientInterface;
 
 /**
  * Remote manager
@@ -19,7 +19,7 @@ use Darvin\Databaser\SSH\SSHClient;
 class RemoteManager extends AbstractManager
 {
     /**
-     * @var \Darvin\Databaser\SSH\SSHClient
+     * @var \Darvin\Databaser\SSH\SSHClientInterface
      */
     private $sshClient;
 
@@ -29,10 +29,10 @@ class RemoteManager extends AbstractManager
     private $mySqlCredentials;
 
     /**
-     * @param string                          $projectPath Project path
-     * @param \Darvin\Databaser\SSH\SSHClient $sshClient   SSH client
+     * @param string                                   $projectPath Project path
+     * @param \Darvin\Databaser\SSH\SSHClientInterface $sshClient   SSH client
      */
-    public function __construct(string $projectPath, SSHClient $sshClient)
+    public function __construct(string $projectPath, SSHClientInterface $sshClient)
     {
         parent::__construct($projectPath);
 

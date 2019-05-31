@@ -17,7 +17,7 @@ use phpseclib\Net\SSH2;
 /**
  * SSH client
  */
-class SSHClient
+class SSHClient implements SSHClientInterface
 {
     /**
      * @var \phpseclib\Net\SSH2
@@ -62,10 +62,7 @@ class SSHClient
     }
 
     /**
-     * @param string $command Command
-     *
-     * @return string
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
     public function exec(string $command): string
     {
@@ -79,13 +76,9 @@ class SSHClient
     }
 
     /**
-     * @param string $remotePathname File remote pathname
-     * @param string $localPathname  File local pathname
-     *
-     * @return SSHClient
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
-    public function get(string $remotePathname, string $localPathname): SSHClient
+    public function get(string $remotePathname, string $localPathname): SSHClientInterface
     {
         if (!$this->getScp()->get($remotePathname, $localPathname)) {
             throw new \RuntimeException(sprintf('Unable to get file "%s".', $remotePathname));
@@ -95,13 +88,9 @@ class SSHClient
     }
 
     /**
-     * @param string $localPathname  File local pathname
-     * @param string $remotePathname File remote pathname
-     *
-     * @return SSHClient
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
-    public function put(string $localPathname, string $remotePathname): SSHClient
+    public function put(string $localPathname, string $remotePathname): SSHClientInterface
     {
         if (!$this->getScp()->put($remotePathname, $localPathname, SCP::SOURCE_LOCAL_FILE)) {
             throw new \RuntimeException(sprintf('Unable to put file "%s".', $remotePathname));
