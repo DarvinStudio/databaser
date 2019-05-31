@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -32,7 +32,7 @@ class RemoteManager extends AbstractManager
      * @param string                          $projectPath Project path
      * @param \Darvin\Databaser\SSH\SSHClient $sshClient   SSH client
      */
-    public function __construct($projectPath, SSHClient $sshClient)
+    public function __construct(string $projectPath, SSHClient $sshClient)
     {
         parent::__construct($projectPath);
 
@@ -44,7 +44,7 @@ class RemoteManager extends AbstractManager
     /**
      * @return RemoteManager
      */
-    public function createDatabase()
+    public function createDatabase(): RemoteManager
     {
         $credentials = $this->getMySqlCredentials();
 
@@ -58,7 +58,7 @@ class RemoteManager extends AbstractManager
     /**
      * @return RemoteManager
      */
-    public function dropDatabase()
+    public function dropDatabase(): RemoteManager
     {
         $credentials = $this->getMySqlCredentials();
 
@@ -72,7 +72,7 @@ class RemoteManager extends AbstractManager
     /**
      * @return RemoteManager
      */
-    public function dumpDatabase()
+    public function dumpDatabase(): RemoteManager
     {
         $credentials = $this->getMySqlCredentials();
 
@@ -93,7 +93,7 @@ class RemoteManager extends AbstractManager
      *
      * @return RemoteManager
      */
-    public function downloadDump($localPathname)
+    public function downloadDump(string $localPathname): RemoteManager
     {
         $this->sshClient->get($this->getDumpPathname(), $localPathname);
 
@@ -105,7 +105,7 @@ class RemoteManager extends AbstractManager
      *
      * @return RemoteManager
      */
-    public function importDump($pathname)
+    public function importDump(string $pathname): RemoteManager
     {
         $credentials = $this->getMySqlCredentials();
 
@@ -122,7 +122,7 @@ class RemoteManager extends AbstractManager
      *
      * @return RemoteManager
      */
-    public function upload($localPathname, $remotePathname)
+    public function upload(string $localPathname, string $remotePathname): RemoteManager
     {
         $this->sshClient->put($localPathname, $remotePathname);
 
@@ -130,9 +130,9 @@ class RemoteManager extends AbstractManager
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getMySqlCredentials()
+    protected function getMySqlCredentials(): MySqlCredentials
     {
         if (empty($this->mySqlCredentials)) {
             $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile(

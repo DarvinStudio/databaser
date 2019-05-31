@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -23,7 +23,7 @@ class GzipArchiver
     /**
      * @param int $bufferSize Buffer size
      */
-    public function __construct($bufferSize = 4096)
+    public function __construct(int $bufferSize = 4096)
     {
         $this->bufferSize = $bufferSize;
     }
@@ -34,7 +34,7 @@ class GzipArchiver
      *
      * @throws \RuntimeException
      */
-    public function extract($source, $target)
+    public function extract(string $source, string $target): void
     {
         if (!$sourceRes = gzopen($source, 'r')) {
             throw new \RuntimeException(sprintf('Unable to read archive file "%s".', $source));

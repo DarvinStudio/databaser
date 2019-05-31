@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -38,7 +38,7 @@ class SSHClient
      *
      * @throws \RuntimeException
      */
-    public function __construct($user, $host, $keyPathname, $password, $port)
+    public function __construct(string $user, string $host, string $keyPathname, string $password, int $port)
     {
         $this->session = new SSH2($host, $port);
         $this->session->enableQuietMode();
@@ -58,7 +58,7 @@ class SSHClient
      * @return string
      * @throws \RuntimeException
      */
-    public function exec($command)
+    public function exec(string $command): string
     {
         $output = $this->session->exec($command);
 
@@ -76,7 +76,7 @@ class SSHClient
      * @return SSHClient
      * @throws \RuntimeException
      */
-    public function get($remotePathname, $localPathname)
+    public function get(string $remotePathname, string $localPathname): SSHClient
     {
         if (!$this->getScp()->get($remotePathname, $localPathname)) {
             throw new \RuntimeException(sprintf('Unable to get file "%s".', $remotePathname));
@@ -92,7 +92,7 @@ class SSHClient
      * @return SSHClient
      * @throws \RuntimeException
      */
-    public function put($localPathname, $remotePathname)
+    public function put(string $localPathname, string $remotePathname): SSHClient
     {
         if (!$this->getScp()->put($remotePathname, $localPathname, SCP::SOURCE_LOCAL_FILE)) {
             throw new \RuntimeException(sprintf('Unable to put file "%s".', $remotePathname));
@@ -108,7 +108,7 @@ class SSHClient
      * @return \phpseclib\Crypt\RSA
      * @throws \RuntimeException
      */
-    private function getKey($pathname, $password)
+    private function getKey(string $pathname, string $password): RSA
     {
         $filename = implode(DIRECTORY_SEPARATOR, [$this->detectHomeDir(), $pathname]);
 
@@ -132,7 +132,7 @@ class SSHClient
      * @return string
      * @throws \RuntimeException
      */
-    private function detectHomeDir()
+    private function detectHomeDir(): string
     {
         if (isset($_SERVER['HOME'])) {
             return $_SERVER['HOME'];
@@ -147,7 +147,7 @@ class SSHClient
     /**
      * @return \phpseclib\Net\SCP
      */
-    private function getScp()
+    private function getScp(): SCP
     {
         if (null === $this->scp) {
             $this->scp = new SCP($this->session);

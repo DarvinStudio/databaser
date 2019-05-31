@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -17,10 +17,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class MySqlCredentials
 {
-    /**
-     * @var array
-     */
-    private static $clientArgMap = [
+    private const CLIENT_ARG_MAP = [
         'host'     => 'h',
         'port'     => 'P',
         'dbName'   => 'D',
@@ -28,19 +25,13 @@ class MySqlCredentials
         'password' => 'p',
     ];
 
-    /**
-     * @var array
-     */
-    private static $dsnParamMap = [
+    private const DSN_PARAM_MAP = [
         'host'   => 'host',
         'port'   => 'port',
         'dbName' => 'dbname',
     ];
 
-    /**
-     * @var array
-     */
-    private static $symfonyParamMap = [
+    private const SYMFONY_PARAM_MAP = [
         'host'     => 'database_host',
         'port'     => 'database_port',
         'dbName'   => 'database_name',
@@ -48,35 +39,32 @@ class MySqlCredentials
         'password' => 'database_password',
     ];
 
-    /**
-     * @var array
-     */
-    private static $requiredSymfonyParams = [
+    private const REQUIRED_SYMFONY_PARAMS = [
         'database_name',
     ];
 
     /**
-     * @var string
+     * @var string|null
      */
     private $host;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $port;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $dbName;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $user;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $password;
 
@@ -86,7 +74,7 @@ class MySqlCredentials
      * @return MySqlCredentials
      * @throws \InvalidArgumentException
      */
-    public static function fromSymfonyParamsFile($content)
+    public static function fromSymfonyParamsFile(string $content): MySqlCredentials
     {
         $params = Yaml::parse($content);
 
@@ -96,7 +84,7 @@ class MySqlCredentials
 
         $params = $params['parameters'];
 
-        foreach (self::$requiredSymfonyParams as $param) {
+        foreach (self::REQUIRED_SYMFONY_PARAMS as $param) {
             if (!isset($params[$param])) {
                 throw new \InvalidArgumentException(
                     sprintf('Unable to create MySQL credentials object from Symfony parameters: required parameter "%s" is missing.', $param)
@@ -106,7 +94,7 @@ class MySqlCredentials
 
         $credentials = new self();
 
-        foreach (self::$symfonyParamMap as $property => $param) {
+        foreach (self::SYMFONY_PARAM_MAP as $property => $param) {
             if (isset($params[$param])) {
                 $credentials->$property = $params[$param];
             }
@@ -120,11 +108,11 @@ class MySqlCredentials
      *
      * @return string
      */
-    public function toClientArgString($includeDbName = true)
+    public function toClientArgString(bool $includeDbName = true): string
     {
         $args = [];
 
-        foreach (self::$clientArgMap as $property => $arg) {
+        foreach (self::CLIENT_ARG_MAP as $property => $arg) {
             if ('dbName' === $property && !$includeDbName) {
                 continue;
             }
@@ -139,11 +127,11 @@ class MySqlCredentials
     /**
      * @return string
      */
-    public function toDsn()
+    public function toDsn(): string
     {
         $params = [];
 
-        foreach (self::$dsnParamMap as $property => $param) {
+        foreach (self::DSN_PARAM_MAP as $property => $param) {
             if (null !== $this->$property) {
                 $params[] = implode('=', [$param, $this->$property]);
             }
@@ -153,41 +141,41 @@ class MySqlCredentials
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHost()
+    public function getHost(): ?string
     {
         return $this->host;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->port;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDbName()
+    public function getDbName(): ?string
     {
         return $this->dbName;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUser()
+    public function getUser(): ?string
     {
         return $this->user;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }

@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -23,12 +23,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class UpdateCommand extends Command
 {
-    const MANIFEST_FILE = 'http://darvinstudio.github.io/databaser/manifest.json';
+    private const MANIFEST_FILE = 'http://darvinstudio.github.io/databaser/manifest.json';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('self-update')
@@ -36,7 +36,7 @@ class UpdateCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

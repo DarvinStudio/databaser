@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -35,9 +35,9 @@ class LocalManager extends AbstractManager
     private $filesToRemove;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function __construct($projectPath)
+    public function __construct(string $projectPath)
     {
         parent::__construct($projectPath);
 
@@ -58,7 +58,7 @@ class LocalManager extends AbstractManager
     /**
      * @return LocalManager
      */
-    public function clearDatabase()
+    public function clearDatabase(): LocalManager
     {
         $pdo = $this->getPdo();
 
@@ -78,7 +78,7 @@ class LocalManager extends AbstractManager
     /**
      * @return bool
      */
-    public function databaseIsEmpty()
+    public function databaseIsEmpty(): bool
     {
         return 0 === $this->getPdo()->query('SHOW TABLES')->rowCount();
     }
@@ -86,7 +86,7 @@ class LocalManager extends AbstractManager
     /**
      * @return LocalManager
      */
-    public function dumpDatabase()
+    public function dumpDatabase(): LocalManager
     {
         $credentials = $this->getMySqlCredentials();
 
@@ -103,7 +103,7 @@ class LocalManager extends AbstractManager
      * @return LocalManager
      * @throws \RuntimeException
      */
-    public function importDump($pathname)
+    public function importDump(string $pathname): LocalManager
     {
         $tmp = tempnam(sys_get_temp_dir(), 'db_');
 
@@ -149,9 +149,9 @@ class LocalManager extends AbstractManager
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getMySqlCredentials()
+    protected function getMySqlCredentials(): MySqlCredentials
     {
         if (empty($this->mySqlCredentials)) {
             $pathname = $this->projectPath.'app/config/parameters.yml';
@@ -171,7 +171,7 @@ class LocalManager extends AbstractManager
     /**
      * @return \PDO
      */
-    private function getPdo()
+    private function getPdo(): \PDO
     {
         if (empty($this->pdo)) {
             $credentials = $this->getMySqlCredentials();

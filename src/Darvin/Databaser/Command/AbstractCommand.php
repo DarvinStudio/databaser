@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -26,9 +26,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 abstract class AbstractCommand extends Command
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $currentDir = $this->getCurrentDir();
 
@@ -56,7 +56,7 @@ DESCRIPTION
      *
      * @return \Darvin\Databaser\Manager\LocalManager
      */
-    protected function createLocalManager(InputInterface $input)
+    protected function createLocalManager(InputInterface $input): LocalManager
     {
         return new LocalManager($input->getArgument('project_path_local'));
     }
@@ -67,7 +67,7 @@ DESCRIPTION
      *
      * @return \Darvin\Databaser\Manager\RemoteManager
      */
-    protected function createRemoteManager(InputInterface $input, OutputInterface $output)
+    protected function createRemoteManager(InputInterface $input, OutputInterface $output): RemoteManager
     {
         list($user, $host) = $this->getUserAndHost($input);
 
@@ -89,7 +89,7 @@ DESCRIPTION
      *
      * @return string
      */
-    private function getProjectPathRemote(InputInterface $input, $host)
+    private function getProjectPathRemote(InputInterface $input, string $host): string
     {
         $path = $input->getArgument('project_path_remote');
 
@@ -106,7 +106,7 @@ DESCRIPTION
      * @return array
      * @throws \InvalidArgumentException
      */
-    private function getUserAndHost(InputInterface $input)
+    private function getUserAndHost(InputInterface $input): array
     {
         $text = $input->getArgument('user@host');
 
@@ -120,7 +120,7 @@ DESCRIPTION
     /**
      * @return string|null
      */
-    private function getCurrentDir()
+    private function getCurrentDir(): ?string
     {
         $cwd = getcwd();
 
