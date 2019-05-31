@@ -32,14 +32,17 @@ class SSHClient
     /**
      * @param string      $user        Username
      * @param string      $host        Hostname
-     * @param string      $keyPathname Private key file pathname relative to home directory
+     * @param string|null $keyPathname Private key file pathname relative to home directory
      * @param string|null $password    Password
      * @param mixed|null  $port        Port
      *
      * @throws \RuntimeException
      */
-    public function __construct(string $user, string $host, string $keyPathname, ?string $password, $port)
+    public function __construct(string $user, string $host, ?string $keyPathname, ?string $password, $port)
     {
+        if (null === $keyPathname) {
+            $keyPathname = '.ssh/id_rsa';
+        }
         if (null !== $port) {
             $port = (int)$port;
         }

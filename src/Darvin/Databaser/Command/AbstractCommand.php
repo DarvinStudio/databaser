@@ -47,7 +47,7 @@ abstract class AbstractCommand extends Command
                 'Symfony project local path absolute or relative to home directory, if empty - current directory',
                 ''
             ),
-            new InputOption('key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private RSA key pathname relative to home directory', '.ssh/id_rsa'),
+            new InputOption('key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private RSA key pathname relative to home directory'),
             new InputOption('password', 'p', InputOption::VALUE_NONE, 'Ask for SSH or SSH key password'),
             new InputOption('port', 'P', InputOption::VALUE_OPTIONAL, 'SSH server port', 22),
         ]);
