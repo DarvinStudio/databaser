@@ -15,7 +15,7 @@ use Darvin\Databaser\MySql\MySqlCredentials;
 /**
  * Manager abstract implementation
  */
-abstract class AbstractManager
+abstract class AbstractManager implements ManagerInterface
 {
     /**
      * @var string
@@ -47,7 +47,7 @@ abstract class AbstractManager
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getDumpPathname(): string
     {
@@ -59,7 +59,7 @@ abstract class AbstractManager
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getDumpFilename(): string
     {
@@ -75,7 +75,7 @@ abstract class AbstractManager
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getProjectPath(): string
     {

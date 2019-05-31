@@ -17,7 +17,7 @@ use Ifsnop\Mysqldump\Mysqldump;
 /**
  * Local manager
  */
-class LocalManager extends AbstractManager
+class LocalManager extends AbstractManager implements LocalManagerInterface
 {
     /**
      * @var \Darvin\Databaser\MySql\MySqlCredentials
@@ -56,9 +56,9 @@ class LocalManager extends AbstractManager
     }
 
     /**
-     * @return LocalManager
+     * {@inheritDoc}
      */
-    public function clearDatabase(): LocalManager
+    public function clearDatabase(): void
     {
         $pdo = $this->getPdo();
 
@@ -71,12 +71,10 @@ class LocalManager extends AbstractManager
 
         $pdo->commit();
         $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
-
-        return $this;
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
     public function databaseIsEmpty(): bool
     {
@@ -84,26 +82,21 @@ class LocalManager extends AbstractManager
     }
 
     /**
-     * @return LocalManager
+     * {@inheritDoc}
      */
-    public function dumpDatabase(): LocalManager
+    public function dumpDatabase(): void
     {
         $credentials = $this->getMySqlCredentials();
 
         (new Mysqldump($credentials->toDsn(), $credentials->getUser(), $credentials->getPassword(), [
             'compress' => Mysqldump::GZIP,
         ]))->start($this->getDumpPathname());
-
-        return $this;
     }
 
     /**
-     * @param string $pathname Database dump pathname
-     *
-     * @return LocalManager
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
-    public function importDump(string $pathname): LocalManager
+    public function importDump(string $pathname): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'db_');
 
@@ -144,8 +137,6 @@ class LocalManager extends AbstractManager
 
         $pdo->commit();
         $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
-
-        return $this;
     }
 
     /**

@@ -11,6 +11,7 @@
 namespace Darvin\Databaser\Command;
 
 use Darvin\Databaser\Manager\LocalManager;
+use Darvin\Databaser\Manager\LocalManagerInterface;
 use Darvin\Databaser\Manager\RemoteManager;
 use Darvin\Databaser\SSH\SSHClient;
 use Symfony\Component\Console\Command\Command;
@@ -56,9 +57,9 @@ abstract class AbstractCommand extends Command
     /**
      * @param \Symfony\Component\Console\Input\InputInterface $input Input
      *
-     * @return \Darvin\Databaser\Manager\LocalManager
+     * @return \Darvin\Databaser\Manager\LocalManagerInterface
      */
-    protected function createLocalManager(InputInterface $input): LocalManager
+    protected function createLocalManager(InputInterface $input): LocalManagerInterface
     {
         return new LocalManager($input->getArgument('project_path_local'));
     }
