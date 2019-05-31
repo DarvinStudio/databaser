@@ -10,6 +10,7 @@
 
 namespace Darvin\Databaser\Command;
 
+use Darvin\Databaser\Archiver\GzipArchiver;
 use Darvin\Databaser\Manager\LocalManager;
 use Darvin\Databaser\Manager\LocalManagerInterface;
 use Darvin\Databaser\Manager\RemoteManager;
@@ -62,7 +63,7 @@ abstract class AbstractCommand extends Command
      */
     protected function createLocalManager(InputInterface $input): LocalManagerInterface
     {
-        return new LocalManager($input->getArgument('project_path_local'));
+        return new LocalManager($input->getArgument('project_path_local'), new GzipArchiver());
     }
 
     /**
