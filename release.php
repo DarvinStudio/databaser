@@ -2,7 +2,7 @@
 <?php
 /**
  * @author    Igor Nikolaev <igor.sv.n@gmail.com>
- * @copyright Copyright (c) 2017, Darvin Studio
+ * @copyright Copyright (c) 2017-2019, Darvin Studio
  * @link      https://www.darvin-studio.ru
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,7 +11,7 @@
 
 $latest = latest();
 
-run('git checkout master');
+run('git checkout 6');
 run('box build');
 
 $current = str_replace('Databaser ', '', run('php databaser.phar --version')[0]);
@@ -92,7 +92,17 @@ function latest()
 {
     $tags = run('git tag -l --sort=v:refname');
 
-    return !empty($tags) ? array_pop($tags) : '0.0.0';
+    if (!empty($tags)) {
+        $tag = array_pop($tags);
+
+        $parts = explode('.', $tag);
+
+        if (reset($parts) >= 6) {
+            return $tag;
+        }
+    }
+
+    return '6.0.0';
 }
 
 /**
