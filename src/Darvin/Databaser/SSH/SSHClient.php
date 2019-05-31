@@ -43,9 +43,11 @@ class SSHClient
         if (null === $keyPathname) {
             $keyPathname = '.ssh/id_rsa';
         }
-        if (null !== $port) {
-            $port = (int)$port;
+        if (null === $port) {
+            $port = 22;
         }
+
+        $port = (int)$port;
 
         $this->session = new SSH2($host, $port);
         $this->session->enableQuietMode();
