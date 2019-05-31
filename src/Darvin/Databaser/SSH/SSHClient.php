@@ -49,7 +49,7 @@ class SSHClient implements SSHClientInterface
 
         $port = (int)$port;
 
-        $this->session = new SSH2($host, $port);
+        $this->session = new SSH2($host, $port, PHP_INT_MAX);
         $this->session->enableQuietMode();
 
         $key = $this->getKey($keyPathname, $password);
@@ -66,7 +66,7 @@ class SSHClient implements SSHClientInterface
      */
     public function exec(string $command): string
     {
-        $output = $this->session->exec($command);
+        $output = (string)$this->session->exec($command);
 
         if (0 !== $this->session->getExitStatus()) {
             throw new \RuntimeException($this->session->getStdError());
