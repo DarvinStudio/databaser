@@ -33,11 +33,11 @@ abstract class AbstractManager
     protected $dumpPathname;
 
     /**
-     * @param string|null $projectPath Project path
+     * @param string $projectPath Project path
      */
-    public function __construct(?string $projectPath)
+    public function __construct(string $projectPath)
     {
-        if (null !== $projectPath) {
+        if ('' !== $projectPath) {
             $projectPath = preg_replace('/\/*$/', '/', $projectPath);
         }
 

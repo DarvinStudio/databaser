@@ -32,13 +32,13 @@ class SSHClient
     /**
      * @param string      $user        Username
      * @param string      $host        Hostname
-     * @param string|null $keyPathname Private key file pathname relative to home directory
+     * @param string      $keyPathname Private key file pathname relative to home directory
      * @param string|null $password    Password
      * @param mixed|null  $port        Port
      *
      * @throws \RuntimeException
      */
-    public function __construct(string $user, string $host, ?string $keyPathname = null, ?string $password = null, $port = null)
+    public function __construct(string $user, string $host, string $keyPathname, ?string $password, $port)
     {
         if (null !== $port) {
             $port = (int)$port;
@@ -106,13 +106,13 @@ class SSHClient
     }
 
     /**
-     * @param string $pathname Private key file pathname relative to home directory
-     * @param string $password Password
+     * @param string      $pathname Private key file pathname relative to home directory
+     * @param string|null $password Password
      *
-     * @return \phpseclib\Crypt\RSA
+     * @return \phpseclib\Crypt\RSA|null
      * @throws \RuntimeException
      */
-    private function getKey(string $pathname, string $password): RSA
+    private function getKey(string $pathname, ?string $password): ?RSA
     {
         $filename = implode(DIRECTORY_SEPARATOR, [$this->detectHomeDir(), $pathname]);
 

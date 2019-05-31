@@ -29,10 +29,10 @@ class RemoteManager extends AbstractManager
     private $mySqlCredentials;
 
     /**
-     * @param string|null                     $projectPath Project path
+     * @param string                          $projectPath Project path
      * @param \Darvin\Databaser\SSH\SSHClient $sshClient   SSH client
      */
-    public function __construct(?string $projectPath, SSHClient $sshClient)
+    public function __construct(string $projectPath, SSHClient $sshClient)
     {
         parent::__construct($projectPath);
 

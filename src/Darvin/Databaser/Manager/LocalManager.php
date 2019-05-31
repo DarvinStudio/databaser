@@ -37,7 +37,7 @@ class LocalManager extends AbstractManager
     /**
      * {@inheritDoc}
      */
-    public function __construct(?string $projectPath)
+    public function __construct(string $projectPath)
     {
         parent::__construct($projectPath);
 

@@ -41,9 +41,11 @@ abstract class AbstractCommand extends Command
         $this->setDefinition([
             new InputArgument('user@host', InputArgument::REQUIRED, 'SSH user@host'),
             new InputArgument('project_path_remote', null !== $currentDir ? InputArgument::OPTIONAL : InputArgument::REQUIRED, $remotePathDescription),
-            new InputArgument('project_path_local', InputArgument::OPTIONAL, <<<DESCRIPTION
-Symfony project local path absolute or relative to home directory, if empty - current directory
-DESCRIPTION
+            new InputArgument(
+                'project_path_local',
+                InputArgument::OPTIONAL,
+                'Symfony project local path absolute or relative to home directory, if empty - current directory',
+                ''
             ),
             new InputOption('key', 'k', InputOption::VALUE_OPTIONAL, 'SSH private RSA key pathname relative to home directory', '.ssh/id_rsa'),
             new InputOption('password', 'p', InputOption::VALUE_NONE, 'Ask for SSH or SSH key password'),
