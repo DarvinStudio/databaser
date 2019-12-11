@@ -65,7 +65,8 @@ abstract class AbstractManager implements ManagerInterface
     {
         if (null === $this->dumpFilename) {
             $this->dumpFilename = sprintf(
-                '%s_%s.sql.gz',
+                '%s_%s_%s.sql.gz',
+                strtolower(preg_replace('/^.*\\\|Manager$/', '', get_class($this))),
                 $this->getMySqlCredentials()->getDbName(),
                 (new \DateTime())->format('Y-m-d_H-i')
             );
