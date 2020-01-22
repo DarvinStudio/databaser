@@ -13,6 +13,7 @@ namespace Darvin\Databaser\Manager;
 use Darvin\Databaser\Archiver\ArchiverInterface;
 use Darvin\Databaser\MySql\MySqlCredentials;
 use Ifsnop\Mysqldump\Mysqldump;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Local manager
@@ -153,8 +154,8 @@ class LocalManager extends AbstractManager implements LocalManagerInterface
     protected function getMySqlCredentials(): MySqlCredentials
     {
         if (null === $this->mySqlCredentials) {
-            foreach (['app/config/parameters.yml', 'config/parameters.yaml'] as $p) {
-                $content = @file_get_contents($this->projectPath.$p);
+            foreach (['app/config/parameters.yml', 'config/parameters.yaml'] as $pathname) {
+                $content = @file_get_contents($this->projectPath.$pathname);
 
                 if (false !== $content) {
                     $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile($content);
@@ -162,16 +163,17 @@ class LocalManager extends AbstractManager implements LocalManagerInterface
                     return $this->mySqlCredentials;
                 }
             }
+            if (class_exists(Dotenv::class)) {
+                $content = @file_get_contents($this->projectPath.'.env');
 
-            $pathname = $this->projectPath.'.env';
+                if (false !== $content) {
+                    $this->mySqlCredentials = MySqlCredentials::fromSymfonyDotenvFile($content);
 
-            $content = @file_get_contents($pathname);
-
-            if (false === $content) {
-                throw new \RuntimeException(sprintf('Unable to get content of Symfony Dotenv file "%s".', $pathname));
+                    return $this->mySqlCredentials;
+                }
             }
 
-            $this->mySqlCredentials = MySqlCredentials::fromSymfonyDotenvFile($content);
+            throw new \RuntimeException('Unable to find any supported Symfony configuration file on local host.');
         }
 
         return $this->mySqlCredentials;

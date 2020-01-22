@@ -75,14 +75,9 @@ class MySqlCredentials
      *
      * @return MySqlCredentials
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      */
     public static function fromSymfonyDotenvFile(string $content): MySqlCredentials
     {
-        if (!class_exists(Dotenv::class)) {
-            throw new \RuntimeException('Symfony Dotenv Component is not installed.');
-        }
-
         $params = (new Dotenv())->parse($content);
 
         if (!isset($params['DATABASE_URL'])) {

@@ -12,6 +12,7 @@ namespace Darvin\Databaser\Manager;
 
 use Darvin\Databaser\MySql\MySqlCredentials;
 use Darvin\Databaser\SSH\SSHClientInterface;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Remote manager
@@ -116,21 +117,34 @@ class RemoteManager extends AbstractManager implements RemoteManagerInterface
     protected function getMySqlCredentials(): MySqlCredentials
     {
         if (null === $this->mySqlCredentials) {
-            $content = null;
+            foreach (['app/config/parameters.yml', 'config/parameters.yaml'] as $pathname) {
+                $content = null;
 
-            try {
-                $content = $this->sshClient->exec(sprintf('cat %s/.env', $this->projectPath));
-            } catch (\RuntimeException $ex) {
+                try {
+                    $content = $this->sshClient->exec(sprintf('cat %s/%s', $this->projectPath, $pathname));
+                } catch (\RuntimeException $ex) {
+                }
+                if (null !== $content) {
+                    $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile($content);
+
+                    return $this->mySqlCredentials;
+                }
             }
-            if (null !== $content) {
-                $this->mySqlCredentials = MySqlCredentials::fromSymfonyDotenvFile($content);
+            if (class_exists(Dotenv::class)) {
+                $content = null;
 
-                return $this->mySqlCredentials;
+                try {
+                    $content = $this->sshClient->exec(sprintf('cat %s/.env', $this->projectPath));
+                } catch (\RuntimeException $ex) {
+                }
+                if (null !== $content) {
+                    $this->mySqlCredentials = MySqlCredentials::fromSymfonyDotenvFile($content);
+
+                    return $this->mySqlCredentials;
+                }
             }
 
-            $this->mySqlCredentials = MySqlCredentials::fromSymfonyParamsFile(
-                $this->sshClient->exec(sprintf('cat %s/app/config/parameters.yml', $this->projectPath))
-            );
+            throw new \RuntimeException('Unable to find any supported Symfony configuration file on remote host.');
         }
 
         return $this->mySqlCredentials;
