@@ -117,7 +117,7 @@ class RemoteManager extends AbstractManager implements RemoteManagerInterface
     protected function getMySqlCredentials(): MySqlCredentials
     {
         if (null === $this->mySqlCredentials) {
-            foreach (['app/config/parameters.yml', 'config/parameters.yaml'] as $pathname) {
+            foreach (['config/parameters.yaml', 'app/config/parameters.yml'] as $pathname) {
                 $content = null;
 
                 try {
