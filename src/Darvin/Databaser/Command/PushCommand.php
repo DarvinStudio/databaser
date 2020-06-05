@@ -40,7 +40,7 @@ class PushCommand extends AbstractCommand
     /**
      * {@inheritDoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
@@ -52,7 +52,7 @@ class PushCommand extends AbstractCommand
         if ($localManager->databaseIsEmpty()) {
             $io->comment('Local database is empty, exiting.');
 
-            return;
+            return 0;
         }
 
         $io->comment('Dumping local database...');
@@ -65,7 +65,7 @@ class PushCommand extends AbstractCommand
         $remoteManager->dumpDatabase();
 
         if (!$io->confirm('Remote database will be dropped. Proceed?')) {
-            return;
+            return 0;
         }
 
         $io->comment('Dropping remote database...');
@@ -76,5 +76,7 @@ class PushCommand extends AbstractCommand
 
         $io->comment('Importing local database dump into the remote database...');
         $remoteManager->importDump($uploadPathname);
+
+        return 0;
     }
 }

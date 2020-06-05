@@ -38,7 +38,7 @@ class UpdateCommand extends Command
     /**
      * {@inheritDoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
@@ -50,7 +50,7 @@ class UpdateCommand extends Command
         if (null === $update) {
             $io->comment(sprintf('You are already using latest Databaser version %s.', $version));
 
-            return;
+            return 0;
         }
 
         $io->comment(sprintf('Updating Databaser to version %s...', $update->getVersion()));
@@ -58,5 +58,7 @@ class UpdateCommand extends Command
         (new Manager($manifest))->update($this->getApplication()->getVersion(), false, true);
 
         $io->success('');
+
+        return 0;
     }
 }
