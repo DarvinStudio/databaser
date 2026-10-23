@@ -1,0 +1,77 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '#^Binary operation "\+" between non\-empty\-string and 1 results in an error\.$#'
+            identifier: binaryOp.invalid
+            count: 1
+            path: release.php
+        -
+            message: '#^Method Darvin\\Databaser\\Command\\PullCommand::execute\(\) should return int but return statement is missing\.$#'
+            identifier: return.missing
+            count: 1
+            path: src/Darvin/Databaser/Command/PullCommand.php
+        -
+            message: '#^Method Darvin\\Databaser\\Command\\PushCommand::execute\(\) should return int but empty return statement found\.$#'
+            identifier: return.empty
+            count: 2
+            path: src/Darvin/Databaser/Command/PushCommand.php
+        -
+            message: '#^Method Darvin\\Databaser\\Command\\PushCommand::execute\(\) should return int but return statement is missing\.$#'
+            identifier: return.missing
+            count: 1
+            path: src/Darvin/Databaser/Command/PushCommand.php
+        -
+            message: '#^Method Darvin\\Databaser\\Command\\UpdateCommand::execute\(\) should return int but empty return statement found\.$#'
+            identifier: return.empty
+            count: 1
+            path: src/Darvin/Databaser/Command/UpdateCommand.php
+        -
+            message: '#^Method Darvin\\Databaser\\Command\\UpdateCommand::execute\(\) should return int but return statement is missing\.$#'
+            identifier: return.missing
+            count: 1
+            path: src/Darvin/Databaser/Command/UpdateCommand.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\AbstractManager::\$dumpFilename \(string\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/AbstractManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\AbstractManager::\$dumpPathname \(string\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/AbstractManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\LocalManager::\$mySqlCredentials \(Darvin\\Databaser\\MySql\\MySqlCredentials\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/LocalManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\LocalManager::\$mySqlCredentials \(Darvin\\Databaser\\MySql\\MySqlCredentials\) in empty\(\) is not falsy\.$#'
+            identifier: empty.property
+            count: 1
+            path: src/Darvin/Databaser/Manager/LocalManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\LocalManager::\$pdo \(PDO\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/LocalManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\LocalManager::\$pdo \(PDO\) in empty\(\) is not falsy\.$#'
+            identifier: empty.property
+            count: 1
+            path: src/Darvin/Databaser/Manager/LocalManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\RemoteManager::\$mySqlCredentials \(Darvin\\Databaser\\MySql\\MySqlCredentials\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/RemoteManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\RemoteManager::\$mySqlCredentials \(Darvin\\Databaser\\MySql\\MySqlCredentials\) in empty\(\) is not falsy\.$#'
+            identifier: empty.property
+            count: 1
+            path: src/Darvin/Databaser/Manager/RemoteManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\SSH\\SSHClient::\$scp \(phpseclib\\Net\\SCP\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/SSH/SSHClient.php

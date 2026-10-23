@@ -1,0 +1,19 @@
+includes:
+    - phpstan-baseline.neon
+parameters:
+    level: 5
+    phpVersion:
+        min: 70200
+        max: 80400
+    excludePaths:
+        - */Tests/*
+        - */vendor/*
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # herrera-io/phar-update (self-update command, only present in already published phars) was removed from require-dev:
+        # its dependency herrera-io/json lives in a deleted GitHub repository, so composer install fails with a 404.
+        -
+            message: '#^(Call to (static )?method \w+\(\) on an unknown class Herrera\\.+|Instantiated class Herrera\\.+ not found)\.$#'
+            identifier: class.notFound
+            reportUnmatched: false
+            path: src/Darvin/Databaser/Command/UpdateCommand.php
