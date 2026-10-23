@@ -21,7 +21,7 @@ class SSHClient implements SSHClientInterface
 {
     /**
      * Connection timeout in seconds, practically unlimited. PHP_INT_MAX is rejected by fsockopen() since PHP 8.0 (ValueError),
-     * 100 years is accepted on every PHP version and on 32-bit builds.
+     * 100 years is accepted on every PHP version (64-bit builds; 32-bit PHP builds are not covered by this constant).
      */
     private const TIMEOUT = 3153600000;
 
