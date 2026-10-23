@@ -1,0 +1,42 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '#^Binary operation "\+" between non\-empty\-string and 1 results in an error\.$#'
+            identifier: binaryOp.invalid
+            count: 1
+            path: release.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\AbstractManager::\$dumpFilename \(string\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/AbstractManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\AbstractManager::\$dumpPathname \(string\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/AbstractManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\LocalManager::\$mySqlCredentials \(Darvin\\Databaser\\MySql\\MySqlCredentials\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/LocalManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\LocalManager::\$pdo \(PDO\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/LocalManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\Manager\\RemoteManager::\$mySqlCredentials \(Darvin\\Databaser\\MySql\\MySqlCredentials\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/Manager/RemoteManager.php
+        -
+            message: '#^Property Darvin\\Databaser\\MySql\\MySqlCredentials::\$dbName \(string\|null\) does not accept int\|null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/MySql/MySqlCredentials.php
+        -
+            message: '#^Property Darvin\\Databaser\\SSH\\SSHClient::\$scp \(phpseclib\\Net\\SCP\) does not accept null\.$#'
+            identifier: assign.propertyType
+            count: 1
+            path: src/Darvin/Databaser/SSH/SSHClient.php
