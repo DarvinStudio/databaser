@@ -69,7 +69,10 @@ class LocalManager extends AbstractManager
             $pdo->query('DROP TABLE '.$table);
         }
 
-        $pdo->commit();
+        // DROP/CREATE TABLE end the transaction implicitly in MySQL; since PHP 8.0 PDO knows that and commit() would throw.
+        if ($pdo->inTransaction()) {
+            $pdo->commit();
+        }
         $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
 
         return $this;
@@ -142,7 +145,10 @@ class LocalManager extends AbstractManager
             }
         }
 
-        $pdo->commit();
+        // DROP/CREATE TABLE end the transaction implicitly in MySQL; since PHP 8.0 PDO knows that and commit() would throw.
+        if ($pdo->inTransaction()) {
+            $pdo->commit();
+        }
         $pdo->query('SET FOREIGN_KEY_CHECKS = 1');
 
         return $this;
