@@ -105,7 +105,7 @@ class SSHClient
      * @param string $pathname Private key file pathname relative to home directory
      * @param string $password Password
      *
-     * @return \phpseclib\Crypt\RSA
+     * @return \phpseclib\Crypt\RSA|null
      * @throws \RuntimeException
      */
     private function getKey($pathname, $password)
